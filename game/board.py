@@ -6,5 +6,4 @@ class Board:
             for _ in range(8):
                 col.append(None)
             self.positions.append(col)
-        # self.positions[0][0] = Rook Black
-        # self.positions[7][7] = Rook White
+        
