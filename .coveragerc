@@ -1,5 +1,5 @@
 [run]
-source = test
+source = game
 omit =
     venv/*
     */test/*
