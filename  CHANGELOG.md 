@@ -1,1 +1,20 @@
 # CHANGELOG
+
+------- August 26 -------
+
+Some problems triying to conect or comunication betwen clases.
+
+Trouble writing unit tests: I'm having trouble writing effective unit tests to isolate
+and test individual components of the code.
+
+------ August 29 -------
+
+Testing: Added tests to class Board to verify the correct functioning of methods 
+such as is_out_of_board, has_piece, and get_color.
+
+Visual Improvements: Enhanced user experience by introducing a visually appealing 
+representation of the chessboard using emojis.
+
+Piece Logic: The fundamental movement rules for rook, pawn, and bishop pieces have
+been defined and implemented.Further testing is necessary to verify the accuracy of
+these movements.

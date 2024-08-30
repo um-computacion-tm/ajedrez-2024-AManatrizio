@@ -4,7 +4,11 @@
 from .piece import Piece
 
 class Bishop(Piece):
-
+    def __init__(self, color):
+        super().__init__(color)
+    
+    def __str__(self):
+        return "♗" if self.color == "WHITE" else "♝"
     def diagonal_movement(initial_row, final_row, initial_col, final_col):
         # Verifica si el movimiento es diagonal comparando las diferencias absolutas entre filas y columnas
         if abs(final_row - initial_row) == abs(final_col - initial_col):

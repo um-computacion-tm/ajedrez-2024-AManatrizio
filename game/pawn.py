@@ -7,9 +7,13 @@ from .piece import Piece
 
 class Pawn(Piece):
 
-    def __init__(self, color, position):
-        super().__init__(color, position) # Hereda de la clase padre Piece
-        self.first_move = True  # Indica si es el primer movimiento, lo inicializa asi 
+    def __init__(self, color):
+        super().__init__(color) # Hereda de la clase padre Piece
+        self.first_move = True  # Indica si es el primer movimiento, lo inicializa asi
+
+    def __str__(self):
+       return "♙" if self.color == "WHITE" else "♟"
+ 
 
      #ovimientos
     def is_valid_movement(self, initial_row, final_row, initial_col, final_col):
