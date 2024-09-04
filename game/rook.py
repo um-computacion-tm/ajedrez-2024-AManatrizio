@@ -3,6 +3,7 @@
 # verticalmente, tantas casillas como quiera.
 
 from .piece import Piece
+from .board import Board
 
 class Rook(Piece):
 
@@ -20,6 +21,8 @@ class Rook(Piece):
 # posiciones inicial y final. Compara filas iguales para movimiento horizontal y
 # columnas iguales para movimiento vertical. Si no es ninguna, el movimiento es inválido.
 
+    # Determina si el movimiento es horizontal o vertical
+    @staticmethod
     def horizontal_or_vertical_movement(initial_row, final_row, initial_col, final_col):
         if initial_row == final_row and initial_col != final_col:
             return "horizontal"
@@ -27,17 +30,38 @@ class Rook(Piece):
             return "vertical"
         else:
             return "invalid"
-    
+         
 
-#_______!!!!!! agregar una comprobacion de si hay alguna pieza en el path y en la posicion a la que quiere llegar.
+    # Verifica si el movimiento es válido (horizontal o vertical)
+    @staticmethod
+    def is_valid_movement(movement):
+        return movement in {"horizontal", "vertical"}
 
-# Verifica si el movimiento es válido (horizontal o vertical) en base a lo que devuelve
-# la función que determina el tipo de movimiento.
-def is_valid_movement(movement):
-    if movement == "horizontal" or movement == "vertical":
+    # Verifica si hay alguna pieza en el camino entre la posición inicial y la final
+    def is_path_clear(self, initial_row, final_row, initial_col, final_col, board):
+        movement_type = self.horizontal_or_vertical_movement(initial_row, final_row, initial_col, final_col)
+        if movement_type == "horizontal":
+            step = 1 if final_col > initial_col else -1
+            for col in range(initial_col + step, final_col, step):
+                if board.matrix[initial_row][col] is not None:
+                    return False
+        elif movement_type == "vertical":
+            step = 1 if final_row > initial_row else -1
+            for row in range(initial_row + step, final_row, step):
+                if board.matrix[row][initial_col] is not None:
+                    return False
         return True
-    else:
+
+    # Verifica si el movimiento es válido para la torre
+    def valid_move(self, initial_row, final_row, initial_col, final_col, board):
+        # Asegúrate de que el movimiento esté dentro de los límites del tablero
+        if not board.is_out_of_board(final_row, final_col):
+            return False
+
+        movement_type = self.horizontal_or_vertical_movement(initial_row, final_row, initial_col, final_col)
+        if self.is_valid_movement(movement_type) and self.is_path_clear(initial_row, final_row, initial_col, final_col, board):
+            # Verifica si el destino está vacío o si hay una pieza enemiga
+            destination_piece = board.matrix[final_row][final_col]
+            if destination_piece is None or destination_piece.color != self.color:
+                return True
         return False
-    
-
-
