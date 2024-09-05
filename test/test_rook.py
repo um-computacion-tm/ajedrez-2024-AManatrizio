@@ -1,33 +1,32 @@
-# import unittest
-# from game.rook import Rook
+# test/test_rook.py
+import unittest
+from game.rook import Rook
 
-# class TestRook(unittest.TestCase):
-#     def test_init(self):
-#         # Inicializa una torre blanca con una posición inicial 0, 0.
-#         rook = Rook(color='white', position=(0, 0))
+class TestRook(unittest.TestCase):
 
-#         # Verifica que el color se inicializa correctamente
-#         self.assertEqual(rook.color, 'white')
+    def test_init(self):
+        rook = Rook("WHITE")  # Creo objeto rook de la Clase Rook
+        self.assertIsInstance(rook, Rook)  # Verifica que rook es una instancia de Rook
 
-#         # Verifica que la posición se inicializa correctamente
-#         self.assertEqual(rook.position, (0, 0))
+    def test_str(self):
+        white_rook = Rook("WHITE")
+        black_rook = Rook("BLACK")
+        self.assertEqual(str(white_rook), "♖")  # Verifica la representación en cadena para WHITE
+        self.assertEqual(str(black_rook), "♜")  # Verifica la representación en cadena para BLACK
+
+    def test_horizontal(self):
+        rook = Rook("WHITE")  # Creo objeto rook de la Clase Rook
+        # Movimieto horizontal
+        self.assertEqual(rook.horizontal_or_vertical_movement(0, 0, 0, 6),"horizontal")
+
+    def test_vertical(self):
+        rook = Rook("WHITE")  # Creo objeto rook de la Clase Rook
+        # Movimieto horizontal
+        self.assertEqual(rook.horizontal_or_vertical_movement(0, 0, 1, 0),"vertical")                                    
 
 
-#     def test_horizontal_or_vertical_movement(self):
-#         # Test horizontal movement
-#         self.assertEqual(Rook.horizontal_or_vertical_movement(0, 0, 0, 5), "horizontal")
-#         # Test vertical movement
-#         self.assertEqual(Rook.horizontal_or_vertical_movement(0, 0, 5, 0), "vertical")
-#         # Test invalid movement (diagonal)
-#         self.assertEqual(Rook.horizontal_or_vertical_movement(0, 0, 5, 5), "invalid")
 
-#     def test_is_valid_movement(self):
-#         # Test valid horizontal movement
-#         self.assertTrue(Rook.is_valid_movement("horizontal"))
-#         # Test valid vertical movement
-#         self.assertTrue(Rook.is_valid_movement("vertical"))
-#         # Test invalid movement
-#         self.assertFalse(Rook.is_valid_movement("invalid"))
+if __name__ == "__main__":
+    unittest.main()
 
-# if __name__ == '__main__':
-#     unittest.main()
+

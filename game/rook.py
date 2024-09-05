@@ -3,7 +3,6 @@
 # verticalmente, tantas casillas como quiera.
 
 from .piece import Piece
-from .board import Board
 
 class Rook(Piece):
 
@@ -24,13 +23,14 @@ class Rook(Piece):
     # Determina si el movimiento es horizontal o vertical
     @staticmethod
     def horizontal_or_vertical_movement(initial_row, final_row, initial_col, final_col):
+        print(f"initial_row: {initial_row}, final_row: {final_row}, initial_col: {initial_col}, final_col: {final_col}")
         if initial_row == final_row and initial_col != final_col:
             return "horizontal"
-        elif initial_col == final_col and initial_row != final_row:
+        elif initial_row != final_row and initial_col == final_col:
             return "vertical"
         else:
             return "invalid"
-         
+
 
     # Verifica si el movimiento es válido (horizontal o vertical)
     @staticmethod
