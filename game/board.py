@@ -57,6 +57,19 @@ class Board:
         else:
             return piece.color
         
+    def is_path_clear(self, initial_row, final_row, initial_col, final_col):
+        if initial_row == final_row:  # Movimiento horizontal
+            step = 1 if final_col > initial_col else -1
+            for col in range(initial_col + step, final_col, step):
+                if self.matrix[initial_row][col] is not None:
+                    return False
+        elif initial_col == final_col:  # Movimiento vertical
+            step = 1 if final_row > initial_row else -1
+            for row in range(initial_row + step, final_row, step):
+                if self.matrix[row][initial_col] is not None:
+                    return False
+        return True
+        
 
 
     # def move_piece(self, start_position, end_position):
