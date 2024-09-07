@@ -35,7 +35,7 @@ class Board:
         self.matrix[7][3] = Queen(color= "BLACK") # Reina
         self.matrix[7][4] = King(color= "BLACK") # Rey
         for i in range(8):
-            self.matrix[6][i] = Pawn(color= "Black") # Peon
+            self.matrix[6][i] = Pawn(color= "BLACK") # Peon
     
    # Revisa si la posicion ingresada no sale fuera de los limites del tablero
     def is_out_of_board(self, row, col):
@@ -57,42 +57,56 @@ class Board:
         else:
             return piece.color
         
-    def is_path_clear(self, initial_row, final_row, initial_col, final_col):
-        if initial_row == final_row:  # Movimiento horizontal
-            step = 1 if final_col > initial_col else -1
-            for col in range(initial_col + step, final_col, step):
-                if self.matrix[initial_row][col] is not None:
-                    return False
-        elif initial_col == final_col:  # Movimiento vertical
-            step = 1 if final_row > initial_row else -1
-            for row in range(initial_row + step, final_row, step):
-                if self.matrix[row][initial_col] is not None:
-                    return False
+
+    # Verifica si el camino está libre entre dos posiciones dadas, según el tipo de movimiento.
+    # 'movement_type' puede ser 'horizontal', 'vertical' o 'diagonal'.
+    # Llama a funciones específicas para cada tipo de movimiento y devuelve True si no hay
+    # piezas bloqueando el camino; False en caso contrario.
+    def is_path_clear(self, initial_row, initial_col, final_row, final_col, movement_type):
+        print(f"Checking path from ({initial_row}, {initial_col}) to ({final_row}, {final_col}) - {movement_type}")
+        if movement_type == "horizontal":
+            return self.is_horizontal_path_clear(initial_row, initial_col, final_col)
+        elif movement_type == "vertical":
+            return self.is_vertical_path_clear(initial_col, initial_row, final_row)  # Cambiado el orden de los argumentos
+        elif movement_type == "diagonal":
+            return self.is_diagonal_path_clear(initial_row, initial_col, final_row, final_col)
+        return False
+
+    def is_horizontal_path_clear(self, row, initial_col, final_col):
+        # Verifica el camino horizontal
+        step = 1 if final_col > initial_col else -1
+        for col in range(initial_col + step, final_col, step):
+            if self.matrix[row][col] is not None:
+                return False
         return True
+
+    def is_vertical_path_clear(self, col, initial_row, final_row):
+        print(f"Checking vertical path from ({initial_row}, {col}) to ({final_row}, {col})")
+        step = 1 if final_row > initial_row else -1
+        for row in range(initial_row + step, final_row + step, step):  # Añadido +step al final_row para incluir la última posición
+            print(f"Checking position ({row}, {col})")
+            if self.matrix[row][col] is not None:
+                print(f"Found piece at ({row}, {col})")
+                return False
+        print("Path is clear")
+        return True
+
+    def is_diagonal_path_clear(self, initial_row, initial_col, final_row, final_col):
+        print(f"Checking diagonal path from ({initial_row}, {initial_col}) to ({final_row}, {final_col})")
+        row_step = 1 if final_row > initial_row else -1
+        col_step = 1 if final_col > initial_col else -1
+        row, col = initial_row + row_step, initial_col + col_step
         
-
-
-    # def move_piece(self, start_position, end_position):
-    #     # Verificar si las posiciones están dentro de los límites del tablero
-    #     if not self.is_within_bounds(start_position) or not self.is_within_bounds(end_position):
-    #         raise OutOfBoardError("El movimiento está fuera de los límites del tablero.")
-
-    #     # Obtener la pieza en la posición de inicio
-    #     piece = self.get_piece(start_position)
-    #     if piece is None:
-    #         raise PieceNotFoundError("No hay ninguna pieza en la posición especificada.")
-
-    #     # Validar si el movimiento es válido según la lógica de la pieza
-    #     if not piece.is_valid_move(start_position, end_position, self):
-    #         raise InvalidMoveError("Movimiento no permitido para esta pieza.")
-
-    #     # Verificar si hay alguna pieza en el camino, si aplica para la pieza)
-    #     if not self.is_path_clear(start_position, end_position, piece):
-    #         raise InvalidMoveError("El camino está bloqueado por otra pieza.")
-
-    #     # Mover la pieza y actualizar las posiciones en el tablero
-    #     self.place_piece(piece, end_position)
-    #     self.place_piece(None, start_position)
+        while (row != final_row) and (col != final_col):
+            print(f"Checking position ({row}, {col})")
+            if self.matrix[row][col] is not None:
+                print(f"Found piece at ({row}, {col})")
+                return False
+            row += row_step
+            col += col_step
+        
+        print("Path is clear")
+        return True
 
 
 

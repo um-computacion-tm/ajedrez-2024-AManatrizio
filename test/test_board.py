@@ -40,6 +40,8 @@ class TestBoard(unittest.TestCase):
         self.assertTrue(board.is_out_of_board(0,0))
         # Posicion fuera del tablero
         self.assertFalse(board.is_out_of_board(9,9))
+        self.assertFalse(board.is_out_of_board(8,8))
+
 
 
     def test_get_piece_color(self):
@@ -50,11 +52,49 @@ class TestBoard(unittest.TestCase):
         # Una blanca
         color = board.get_color(0, 0)
         self.assertEqual(color, "WHITE")
+    
+    def test_is_path_clear(self):
+        board = Board()
+        self.assertTrue(board.is_path_clear(3, 0, 3, 7, 'horizontal'))
+    
+    def test_horizontal_path_blocked(self):
+        board = Board()
+        # Bloqueamos una posición en el camino horizontal
+        self.assertFalse(board.is_path_clear(0, 0, 0, 7, 'horizontal'))
+
+    def test_vertical_path_clear(self):
+        board = Board()
+        # Camino vertical despejado
+        self.assertTrue(board.is_path_clear(1, 0, 1, 4, 'vertical'))
+
+    def test_vertical_path_blocked(self):
+        board = Board()
+        board.matrix[3][0] = Pawn(color="WHITE")  # Coloca una pieza en el camino
+        self.assertFalse(board.is_path_clear(1, 0, 4, 0, 'vertical'))
+       
         
+    def test_diagonal_path_clear(self):
+        board = Board()
+        # Camino diagonal despejado
+        self.assertTrue(board.is_path_clear(2, 0, 3, 1, 'diagonal'))
+
+    def test_longer_diagonal_path_clear(self):
+        board = Board()
+        self.assertTrue(board.is_path_clear(2, 2, 5, 5, 'diagonal'))
+
+    def test_longer_diagonal_path_blocked(self):
+        board = Board()
+        # Camino diagonal bloquedo
+        board.matrix[3][3] = Pawn(color="WHITE")  # Coloca una pieza en el camino
+        self.assertFalse(board.is_path_clear(2, 2, 5, 5, 'diagonal'))
+
+
 
         
-
         
+
+    
+            
 
 
 

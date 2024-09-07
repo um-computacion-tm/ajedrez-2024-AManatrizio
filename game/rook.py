@@ -16,9 +16,8 @@ class Rook(Piece):
 
 # initial_row -> fila inicial donde comienza la pieza 
 # final_row -> fila a la que se quiere mover la pieza
-# Determina si el movimiento es horizontal, vertical o inválido según las
-# posiciones inicial y final. Compara filas iguales para movimiento horizontal y
-# columnas iguales para movimiento vertical. Si no es ninguna, el movimiento es inválido.
+# filas iguales -> horizontal
+# columnas iguales -> vertical
 
     # Determina si el movimiento es horizontal o vertical
     @staticmethod
