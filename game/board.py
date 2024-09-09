@@ -57,6 +57,28 @@ class Board:
         else:
             return piece.color
         
+    def is_valid_move(self,p_fila, p_columna, m_fila, m_columna):
+        #se checkea que el movimiento que hace la pieza sea correcto dentro de las posibilidades de la misma
+        flag = True
+        if (not self.has_piece(p_fila, p_columna)):
+            print("No hay una pieza en {p_fila} {p_columna} ")
+            flag = False
+        if (not self.is_out_of_board(p_fila, p_columna)):
+            print("La pieza está fuera del tablero")
+            flag = False
+        if (not self.is_out_of_board(m_fila, m_columna)):
+            print("el movimiento está fuera del tablero")
+            flag = False
+        pieza = self.matrix[p_fila][p_columna]    
+        flag = pieza.is_valid_movement(p_fila, p_columna, m_fila, m_columna)
+        return flag
+
+    def move_piece(self, p_fila, p_columna, m_fila, m_columna):
+        pieza = self.matrix[p_fila][p_columna]
+        self.matrix[p_fila][p_columna] = None
+        self.matrix[m_fila][m_columna] = pieza
+
+        
 
     # Verifica si el camino está libre entre dos posiciones dadas, según el tipo de movimiento.
     # 'movement_type' puede ser 'horizontal', 'vertical' o 'diagonal'.

@@ -15,7 +15,7 @@ class Pawn(Piece):
        return "♙" if self.color == "WHITE" else "♟"
  
 
-     #ovimientos
+    # Movimientos
     def is_valid_movement(self, initial_row, final_row, initial_col, final_col):
         # Movimientos verticales
         # Si estas son iguales significa que se mantiene en la misma columna es decir el movimiento es correcto.
@@ -30,12 +30,12 @@ class Pawn(Piece):
                 return True
         
 
-        # Capturas
-        # Movimiento de captura en diagonal
-        elif abs(initial_col - final_col) == 1 and abs(final_row - initial_row) == 1:
-            return True
+        # # Capturas
+        # # Movimiento de captura en diagonal
+        # elif abs(initial_col - final_col) == 1 and abs(final_row - initial_row) == 1:
+        #     return True
         
-        return False
+        # return False
     
 
 

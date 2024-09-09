@@ -2,14 +2,13 @@ from game.chess import Chess
 
 
 def main():
-    game = Chess()
-    while not game.is_over():
-        game.display_board()
-        move = input("Enter your move: ")
-        if not game.play_move(move):
+    chess = Chess()
+    while not chess.is_over():
+        chess.display_board()
+        piece = input("Enter your piece to move: ")
+        move = input("Enter where to move: ")
+        if not chess.play_move(piece,move):
             print("Invalid move! Try again.")
-            
-
 
 if __name__ == "__main__":
     main()
