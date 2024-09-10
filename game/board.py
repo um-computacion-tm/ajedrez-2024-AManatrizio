@@ -131,7 +131,6 @@ class Board:
         return True
 
 
-
     def display_board(self):
         # Mostrar el tablero en la consola
         print("    0   1   2   3   4   5   6   7")

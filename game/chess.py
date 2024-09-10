@@ -23,7 +23,7 @@ class Chess:
         return False
 
     def parse_move(self, move):
-        #checkeo de que las posiciones son validas
+        # Checkeo de que las posiciones son validas
         # Convertir el movimiento en coordenadas
         fila = int(move[0])
         columna = int(move[1])
