@@ -20,19 +20,20 @@ class Rook(Piece):
 # columnas iguales -> vertical
 
     # Determina si el movimiento es horizontal o vertical
-    @staticmethod
-    def horizontal_or_vertical_movement(initial_row, final_row, initial_col, final_col):
-        print(f"initial_row: {initial_row}, final_row: {final_row}, initial_col: {initial_col}, final_col: {final_col}")
+    def horizontal_or_vertical_movement(self, initial_row, final_row, initial_col, final_col):
         if initial_row == final_row and initial_col != final_col:
             return "horizontal"
         elif initial_row != final_row and initial_col == final_col:
             return "vertical"
         else:
             return "invalid"
-        
-    # Verifica si el movimiento es válido (horizontal o vertical)
-    @staticmethod
-    def is_valid_movement(movement):
-        return movement in {"horizontal", "vertical"}
 
-    
+    def is_valid_movement(self, initial_row, initial_col, final_row, final_col):
+        # Determinar el tipo de movimiento
+        movement_type = self.horizontal_or_vertical_movement(initial_row, final_row, initial_col, final_col)
+        
+        if movement_type == "invalid":
+            return False
+
+        # La verificación del camino despejado se hará en el Board
+        return True

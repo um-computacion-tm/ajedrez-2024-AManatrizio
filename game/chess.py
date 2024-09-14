@@ -13,12 +13,15 @@ class Chess:
 
 
     def play_move(self, piece , move):
+        print(f"Intentando mover pieza {piece} a {move}")
         p_fila, p_columna = self.parse_move(piece)
         m_fila, m_columna = self.parse_move(move)
         #initial_pos, final_pos = self.parse_move(move)
         if self.board.is_valid_move(p_fila, p_columna, m_fila, m_columna):
             self.board.move_piece(p_fila, p_columna, m_fila, m_columna)
+            print(f"Posiciones convertidas: inicial ({p_fila}, {p_columna}), final ({m_fila}, {m_columna})")
             self.switch_turn()
+            print(f"Turno de: {self.current_player}")
             return True
         return False
 
