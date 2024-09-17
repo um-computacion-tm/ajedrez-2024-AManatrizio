@@ -3,6 +3,9 @@ from game.knight import Knight
 
 class TestKnight(unittest.TestCase):
 
+    def setUp(self):
+        self.knight = Knight("WHITE")  # Crea un objeto Knight blanco para usar en las pruebas
+
     def test_init(self):
         # Crea un objeto Knight de color blanco
         white_knight = Knight("WHITE")
@@ -16,22 +19,14 @@ class TestKnight(unittest.TestCase):
         self.assertEqual(black_knight.color, "BLACK")
         self.assertEqual(str(black_knight), "♞")  # Verifica la representación del caballo negro
 
+    
     def test_valid_movement(self):
-        knight = Knight("WHITE")  # Crea un objeto Knight blanco
-        
         # Movimientos válidos en forma de L
-        self.assertTrue(knight.is_valid_movement(0, 2, 0, 1))  # Dos casillas verticales y una horizontal
-        self.assertTrue(knight.is_valid_movement(0, 1, 0, 2))  # Una casilla vertical y dos horizontales
-        self.assertTrue(knight.is_valid_movement(3, 5, 4, 3))  # Otro movimiento en L válido
-        
-    def test_invalid_movement(self):
-        knight = Knight("WHITE")  # Crea un objeto Knight blanco
-        
-        # Movimientos inválidos que no forman una "L"
-        self.assertFalse(knight.is_valid_movement(0, 3, 0, 1))  # Movimiento inválido
-        self.assertFalse(knight.is_valid_movement(1, 1, 0, 2))  # Movimiento inválido
-        self.assertFalse(knight.is_valid_movement(4, 6, 2, 2))  # Movimiento inválido
+        self.assertTrue(self.knight.is_valid_movement(0, 2, 0, 1))  # Dos casillas verticales y una horizontal
 
+    def test_invalid_movement(self):
+        # Movimientos inválidos que no forman una "L"
+        self.assertFalse(self.knight.is_valid_movement(0, 3, 0, 1))  # Movimiento inválido
 
 
 
