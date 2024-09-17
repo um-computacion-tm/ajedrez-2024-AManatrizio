@@ -15,9 +15,6 @@ class TestRook(unittest.TestCase):
         # Verifica que rook es una instancia de Rook
         self.assertIsInstance(self.rook, Rook)
 
-    def check_piece_str(self, piece, expected_white, expected_black):
-        self.assertEqual(str(piece("WHITE")), expected_white)
-        self.assertEqual(str(piece("BLACK")), expected_black)
 
     def test_rook_str(self):
         utils = TestUtils()
