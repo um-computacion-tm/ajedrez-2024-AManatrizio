@@ -1,8 +1,6 @@
 import unittest
 from game.bishop import Bishop
 
-class TestBishop(unittest.TestCase):
-    import unittest
 
 class TestBishop(unittest.TestCase):
 
