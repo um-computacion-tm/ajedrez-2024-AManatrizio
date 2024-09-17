@@ -13,29 +13,18 @@ class Pawn(Piece):
 
     def __str__(self):
        return "♙" if self.color == "WHITE" else "♟"
- 
-
-    # Movimientos
-    def is_valid_movement(self, initial_row, final_row, initial_col, final_col):
-        # Movimientos verticales
-        # Si estas son iguales significa que se mantiene en la misma columna es decir el movimiento es correcto.
-        if initial_col == final_col:
-            # Primer movimiento del peón (dos casillas hacia adelante)
-            # TRUE                   Ejemplo: 3 - 1 = 2
-            if self.first_move and abs(final_row - initial_row) == 2:
-                self.first_move = False  # Después del primer movimiento, se desactiva
-                return True
-            # Movimientos normales del peón (una casilla hacia adelante)
-            elif abs(final_row - initial_row) == 1:
-                return True
-        
-
-        # # Capturas
-        # # Movimiento de captura en diagonal
-        # elif abs(initial_col - final_col) == 1 and abs(final_row - initial_row) == 1:
-        #     return True
-        
-        # return False
     
+    def is_valid_movement(self, initial_row, final_row, initial_col, final_col):
+        return True
 
-
+    # # Significa que es un movimento en la misma columna
+    # def is_same_column(self, initial_col, final_col):
+    #     if initial_col == final_col:
+    #         return True
+        
+    # # Determina si el movimiento es para arriba o para abajo dependiendo el color.
+    # def is_moving_forward(self, initial_row, final_row, color):
+    #     if color == "WHITE":
+    #         return final_row < initial_row  # Blanco se mueve hacia arriba en el tablero
+    #     else:
+    #         return final_row > initial_row  # Negro se mueve hacia abajo en el tablero

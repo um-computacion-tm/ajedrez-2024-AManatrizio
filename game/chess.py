@@ -8,6 +8,7 @@ class Chess:
         # Implementar lógica para determinar si el juego ha terminado
         pass
 
+
     def display_board(self):
         self.board.display_board()
 

@@ -1,7 +1,7 @@
 import unittest
 from game.king import King  # Asegúrate de importar correctamente tu clase King
 
-class TestKingMovement(unittest.TestCase):
+class TestKing(unittest.TestCase):
     def setUp(self):
         # Crear una instancia de King para usar en los tests
         self.king = King("white")  # Asumiendo que el rey tiene un color

@@ -1,7 +1,7 @@
 import unittest
 from game.queen import Queen  # Asegúrate de importar correctamente tu clase Queen
 
-class TestQueenMovement(unittest.TestCase):
+class TestQueen(unittest.TestCase):
     
     def setUp(self):
         # Crear una instancia de Queen para usar en los tests

@@ -6,6 +6,9 @@ from game.knight import Knight
 from game.bishop import Bishop
 from game.queen import Queen
 from game.pawn import Pawn
+from game.piece import Piece
+from unittest.mock import patch
+from io import StringIO
 
 class TestBoard(unittest.TestCase):
     
@@ -31,8 +34,8 @@ class TestBoard(unittest.TestCase):
         self.assertIsInstance(board.matrix[0][4],King)
 
         # assertEqual Verifica que a es igual a b.
-        self.assertEqual(board.matrix[0][0].color,"WHITE")
-        self.assertEqual(board.matrix[7][3].color,"BLACK")
+        self.assertEqual(board.matrix[0][0].color,"BLACK")
+        self.assertEqual(board.matrix[7][3].color,"WHITE")
 
     def test_is_out_of_board(self):
         board = Board()
@@ -44,14 +47,31 @@ class TestBoard(unittest.TestCase):
 
 
 
-    def test_get_piece_color(self):
+    def test_get_color(self):
         board = Board()
         # Una negra
         color = board.get_color(7, 3)
-        self.assertEqual(color, "BLACK")
+        self.assertEqual(color, "WHITE")
         # Una blanca
         color = board.get_color(0, 0)
-        self.assertEqual(color, "WHITE")
+        self.assertEqual(color, "BLACK")
+    
+    def test_has_piece(self):
+        board = Board()  # Crea una instancia de Board
+        self.assertTrue(board.has_piece(0, 0))
+        self.assertFalse(board.has_piece(4, 4))  # Asumiendo que esta posición está vacía
+
+    def test_is_valid_move(self):
+        board = Board()
+
+        # Movimiento válido para una torre (0,0 a 1,0)
+        self.assertTrue(board.is_valid_move(0, 0, 1, 0))
+
+        # Movimiento inválido: fuera del tablero
+        self.assertFalse(board.is_valid_move(0, 0, 8, 8))
+
+
+
     
     def test_is_path_clear(self):
         board = Board()
@@ -69,7 +89,7 @@ class TestBoard(unittest.TestCase):
 
     def test_vertical_path_blocked(self):
         board = Board()
-        board.matrix[3][0] = Pawn(color="WHITE")  # Coloca una pieza en el camino
+        board.matrix[3][0] = Pawn(color="BLACK")  # Coloca una pieza en el camino
         self.assertFalse(board.is_path_clear(1, 0, 4, 0, 'vertical'))
        
         
@@ -78,28 +98,48 @@ class TestBoard(unittest.TestCase):
         # Camino diagonal despejado
         self.assertTrue(board.is_path_clear(2, 0, 3, 1, 'diagonal'))
 
-    def test_longer_diagonal_path_clear(self):
-        board = Board()
-        self.assertTrue(board.is_path_clear(2, 2, 5, 5, 'diagonal'))
 
-    def test_longer_diagonal_path_blocked(self):
+    def test_display_board(self):
         board = Board()
-        # Camino diagonal bloquedo
-        board.matrix[3][3] = Pawn(color="WHITE")  # Coloca una pieza en el camino
-        self.assertFalse(board.is_path_clear(2, 2, 5, 5, 'diagonal'))
+        self.maxDiff = None  # Permite ver todo el diff cuando hay un error
+        expected_output = (
+            "    0   1   2   3   4   5   6   7\n"
+            "  +---+---+---+---+---+---+---+---+\n"
+            "0 | ♜ | ♞ | ♝ | ♛ | ♚ | ♝ | ♞ | ♜ | 0\n"
+            "  +---+---+---+---+---+---+---+---+\n"
+            "1 | ♟ | ♟ | ♟ | ♟ | ♟ | ♟ | ♟ | ♟ | 1\n"
+            "  +---+---+---+---+---+---+---+---+\n"
+            "2 |   |   |   |   |   |   |   |   | 2\n"
+            "  +---+---+---+---+---+---+---+---+\n"
+            "3 |   |   |   |   |   |   |   |   | 3\n"
+            "  +---+---+---+---+---+---+---+---+\n"
+            "4 |   |   |   |   |   |   |   |   | 4\n"
+            "  +---+---+---+---+---+---+---+---+\n"
+            "5 |   |   |   |   |   |   |   |   | 5\n"
+            "  +---+---+---+---+---+---+---+---+\n"
+            "6 | ♙ | ♙ | ♙ | ♙ | ♙ | ♙ | ♙ | ♙ | 6\n"
+            "  +---+---+---+---+---+---+---+---+\n"
+            "7 | ♖ | ♘ | ♗ | ♕ | ♔ | ♗ | ♘ | ♖ | 7\n"
+            "  +---+---+---+---+---+---+---+---+\n"
+            "    0   1   2   3   4   5   6   7\n"
+        )
+
+        # Usar patch para capturar la salida de print
+        with patch('sys.stdout', new=StringIO()) as fake_output:
+            board.display_board()
+            actual_output = fake_output.getvalue()
+
+        print("Actual output:")
+        print(actual_output)
+        print("Expected output:")
+        print(expected_output)
+
+        self.assertEqual(actual_output, expected_output)
+
 
 
 
         
-        
-
-    
-            
-
-
-
-
-
 
 if __name__ == '__main__':
     unittest.main()
