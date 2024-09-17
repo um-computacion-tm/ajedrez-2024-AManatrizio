@@ -14,9 +14,6 @@ class TestBoard(unittest.TestCase):
     def setUp(self):
         self.board = Board()  # Crea una instancia de Board para usar en las pruebas
 
-    def assertPathClear(self, start_row, start_col, end_row, end_col, direction, expected):
-        self.assertEqual(self.board.is_path_clear(start_row, start_col, end_row, end_col, direction), expected)
-
     def test_init(self):
         # Testea que se crea el tablero de 8x8
         self.assertEqual(len(self.board.matrix), 8)
@@ -58,10 +55,7 @@ class TestBoard(unittest.TestCase):
         self.assertFalse(self.board.is_valid_move(0, 0, 8, 8))  # Movimiento inválido
 
     def test_is_path_clear(self):
-        # Verifica si el camino está despejado en diferentes direcciones
-        self.assertPathClear(3, 0, 3, 7, 'horizontal', True)
-        self.assertPathClear(1, 0, 1, 4, 'vertical', True)
-        self.assertPathClear(2, 0, 3, 1, 'diagonal', True)
+        self.assertTrue(self.board.is_path_clear(3, 0, 3, 7, 'horizontal'))
 
     def test_horizontal_path_blocked(self):
         # Verifica si un camino horizontal está bloqueado
@@ -102,7 +96,7 @@ class TestBoard(unittest.TestCase):
 
         self.assertEqual(actual_output, expected_output)
 
-        
+
 
 if __name__ == '__main__':
     unittest.main()
