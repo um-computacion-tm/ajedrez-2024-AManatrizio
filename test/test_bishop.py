@@ -4,6 +4,17 @@ from game.bishop import Bishop
 
 class TestBishop(unittest.TestCase):
 
+    def setUp(self):
+        self.bishop = Bishop("WHITE")  # Crea un objeto Bishop blanco para usar en las pruebas
+
+    def check_piece_str(self, piece, expected_white, expected_black):
+        self.assertEqual(str(piece("WHITE")), expected_white)
+        self.assertEqual(str(piece("BLACK")), expected_black)
+
+    def test_str(self):
+        # Verifica la representación en cadena para WHITE y BLACK
+        self.check_piece_str(Bishop, "♗", "♝")
+
     # Test para verificar la inicialización del objeto Bishop
     def test_init(self):
         bishop = Bishop("WHITE")  # Creo objeto de la Clase Bishop
@@ -13,13 +24,6 @@ class TestBishop(unittest.TestCase):
         bishop_black = Bishop("BLACK")  # Creo objeto de la Clase Bishop con color "BLACK"
         self.assertEqual(bishop_black.color, "BLACK")  # Verifica que el color es "BLACK"
 
-    # Test para verificar el método __str__
-    def test_str(self):
-        bishop_white = Bishop("WHITE")
-        self.assertEqual(str(bishop_white), "♗")  # Verifica que el alfil blanco se representa como "♗"
-        
-        bishop_black = Bishop("BLACK")
-        self.assertEqual(str(bishop_black), "♝")  # Verifica que el alfil negro se representa como "♝"
 
     # Test para verificar el movimiento diagonal
     def test_diagonal_movement(self):

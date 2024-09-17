@@ -13,14 +13,14 @@ class TestRook(unittest.TestCase):
         # Verifica que rook es una instancia de Rook
         self.assertIsInstance(self.rook, Rook)
 
+    def check_piece_str(self, piece, expected_white, expected_black):
+        self.assertEqual(str(piece("WHITE")), expected_white)
+        self.assertEqual(str(piece("BLACK")), expected_black)
+
     def test_str(self):
-        # Verifica la representación en cadena para WHITE
-        white_rook = Rook("WHITE")
-        self.assertEqual(str(white_rook), "♖")
-        
-        # Verifica la representación en cadena para BLACK
-        black_rook = Rook("BLACK")
-        self.assertEqual(str(black_rook), "♜")
+        # Verifica la representación en cadena para WHITE y BLACK
+        self.check_piece_str(Rook, "♖", "♜")
+
 
     def test_horizontal(self):
         # Movimiento horizontal válido
