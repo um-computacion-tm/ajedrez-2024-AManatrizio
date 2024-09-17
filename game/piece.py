@@ -3,15 +3,15 @@
 
 from abc import ABC, abstractmethod
 
-
 class Piece(ABC):
     def __init__(self, color):
         self.color = color
 
     # Movimientos
-    def is_valid_movement(self,  initial_row, initial_col, final_row , final_col):
+    @abstractmethod
+    def is_valid_movement(self, initial_row, final_row, initial_col, final_col):
         """Este método será implementado por cada pieza específica."""
         raise NotImplementedError("Este método debe ser sobreescrito en las subclases")
-        
+
 
 
