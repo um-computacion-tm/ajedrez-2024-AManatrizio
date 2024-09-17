@@ -1,10 +1,12 @@
 import unittest
 from game.rook import Rook
+from .test_utils import TestUtils
 
 class TestRook(unittest.TestCase):
 
     def setUp(self):
         self.rook = Rook("WHITE")  # Crea un objeto Rook blanco para usar en las pruebas
+
 
     def check_movement(self, start_row, start_col, end_row, end_col, expected_result):
         self.assertEqual(self.rook.horizontal_or_vertical_movement(start_row, start_col, end_row, end_col), expected_result)
@@ -17,9 +19,9 @@ class TestRook(unittest.TestCase):
         self.assertEqual(str(piece("WHITE")), expected_white)
         self.assertEqual(str(piece("BLACK")), expected_black)
 
-    def test_str(self):
-        # Verifica la representación en cadena para WHITE y BLACK
-        self.check_piece_str(Rook, "♖", "♜")
+    def test_rook_str(self):
+        utils = TestUtils()
+        utils.check_piece_str(self, Rook, "♖", "♜")
 
 
     def test_horizontal(self):

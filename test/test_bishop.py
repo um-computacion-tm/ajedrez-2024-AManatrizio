@@ -1,6 +1,6 @@
 import unittest
 from game.bishop import Bishop
-
+from .test_utils import TestUtils
 
 class TestBishop(unittest.TestCase):
 
@@ -11,10 +11,9 @@ class TestBishop(unittest.TestCase):
         self.assertEqual(str(piece("WHITE")), expected_white)
         self.assertEqual(str(piece("BLACK")), expected_black)
 
-    def test_str(self):
-        # Verifica la representación en cadena para WHITE y BLACK
-        self.check_piece_str(Bishop, "♗", "♝")
-
+    def test_bishop_str(self):
+        utils = TestUtils()
+        utils.check_piece_str(self, Bishop, "♗", "♝")
     # Test para verificar la inicialización del objeto Bishop
     def test_init(self):
         bishop = Bishop("WHITE")  # Creo objeto de la Clase Bishop
