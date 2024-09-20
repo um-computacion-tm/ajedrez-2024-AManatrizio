@@ -11,16 +11,10 @@ class Bishop(Piece):
         return "♗" if self.color == "WHITE" else "♝"
     
 
-    def diagonal_movement(self, initial_row, final_row, initial_col, final_col):
-        # Verifica si el movimiento es diagonal comparando las diferencias absolutas entre filas y columnas
+    
+    # Verifica si el movimiento es diagonal comparando las diferencias absolutas entre filas y columnas
+    def is_valid_movement(self, initial_row, initial_col, final_row, final_col):
         if abs(final_row - initial_row) == abs(final_col - initial_col):
-            return "diagonal"
-        else:
-            return "invalid"
-
-    def is_valid_movement(self, movement):
-        # Solo los movimientos diagonales son válidos para el alfil
-        if movement == "diagonal":
             return True
         else:
             return False

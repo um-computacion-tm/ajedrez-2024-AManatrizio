@@ -5,41 +5,32 @@ from .test_utils import TestUtils
 class TestBishop(unittest.TestCase):
 
     def setUp(self):
-        self.bishop = Bishop("WHITE")  # Crea un objeto Bishop blanco para usar en las pruebas
-
-    def check_piece_str(self, piece, expected_white, expected_black):
-        self.assertEqual(str(piece("WHITE")), expected_white)
-        self.assertEqual(str(piece("BLACK")), expected_black)
+        self.bishop = Bishop("WHITE")
 
     def test_bishop_str(self):
         utils = TestUtils()
         utils.check_piece_str(self, Bishop, "♗", "♝")
-    # Test para verificar la inicialización del objeto Bishop
+
     def test_init(self):
-        bishop = Bishop("WHITE")  # Creo objeto de la Clase Bishop
-        self.assertIsInstance(bishop, Bishop)  # Verifica que es una instancia de Bishop
-        self.assertEqual(bishop.color, "WHITE")  # Verifica que el color es "WHITE"
+        bishop = Bishop("WHITE")
+        self.assertIsInstance(bishop, Bishop)
+        self.assertEqual(bishop.color, "WHITE")
         
-        bishop_black = Bishop("BLACK")  # Creo objeto de la Clase Bishop con color "BLACK"
-        self.assertEqual(bishop_black.color, "BLACK")  # Verifica que el color es "BLACK"
+        bishop_black = Bishop("BLACK")
+        self.assertEqual(bishop_black.color, "BLACK")
 
-
-    # Test para verificar el movimiento diagonal
-    def test_diagonal_movement(self):
-        bishop = Bishop("WHITE")
-        self.assertEqual(bishop.diagonal_movement(2, 4, 2, 4), "diagonal")  # Movimiento diagonal válido
-        self.assertEqual(bishop.diagonal_movement(3, 5, 3, 5), "diagonal")  # Otro movimiento diagonal válido
-        self.assertEqual(bishop.diagonal_movement(1, 3, 1, 4), "invalid")   # Movimiento no diagonal (inválido)
-        self.assertEqual(bishop.diagonal_movement(2, 3, 2, 5), "invalid")   # Otro movimiento no diagonal (inválido)
-
-    # Test para verificar si el movimiento es válido
     def test_is_valid_movement(self):
-        bishop = Bishop("WHITE")
-        self.assertTrue(bishop.is_valid_movement("diagonal"))  # Verifica que un movimiento diagonal es válido
-        self.assertFalse(bishop.is_valid_movement("invalid"))  # Verifica que un movimiento no diagonal es inválido
+        # Movimientos válidos
+        self.assertTrue(self.bishop.is_valid_movement(0, 0, 7, 7))  # Diagonal ascendente derecha
+        self.assertTrue(self.bishop.is_valid_movement(7, 7, 0, 0))  # Diagonal descendente izquierda
+        self.assertTrue(self.bishop.is_valid_movement(0, 7, 7, 0))  # Diagonal ascendente izquierda
+        self.assertTrue(self.bishop.is_valid_movement(7, 0, 0, 7))  # Diagonal descendente derecha
+        self.assertTrue(self.bishop.is_valid_movement(3, 3, 5, 5))  # Movimiento corto
 
-
-
+        # Movimientos inválidos
+        self.assertFalse(self.bishop.is_valid_movement(0, 0, 0, 7))  # Horizontal
+        self.assertFalse(self.bishop.is_valid_movement(0, 0, 7, 0))  # Vertical
+        self.assertFalse(self.bishop.is_valid_movement(0, 0, 2, 1))  # Movimiento de caballo
 
 if __name__ == '__main__':
     unittest.main()
