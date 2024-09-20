@@ -21,8 +21,12 @@ class TestKnight(unittest.TestCase):
 
     
     def test_valid_movement(self):
+        white_knight = Knight("WHITE")
         # Movimientos válidos en forma de L
-        self.assertTrue(self.knight.is_valid_movement(0, 2, 0, 1))  # Dos casillas verticales y una horizontal
+        self.assertTrue(white_knight.is_valid_movement(0, 1, 2, 0))  # Dos casillas verticales y una horizontal
+        self.assertTrue(white_knight.is_valid_movement(0, 1, 2, 0))  # (0, 1) a (2, 0)
+        self.assertTrue(white_knight.is_valid_movement(0, 1, 2, 2))  # (0, 1) a (2, 2)
+        self.assertTrue(white_knight.is_valid_movement(0, 1, 1, 3))  # (0, 1) a (1, 3)
 
     def test_invalid_movement(self):
         # Movimientos inválidos que no forman una "L"
