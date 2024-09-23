@@ -1,45 +1,72 @@
-# import unittest
-# from game.pawn import Pawn
+import unittest
+from game.pawn import Pawn
+from .test_utils import TestUtils
 
-# class TestPawn(unittest.TestCase):
-#     def test_init(self):
-#         pawn = Pawn("WHITE")  # Creo objeto pawn de la Clase Pawn
-#         self.assertIsInstance(pawn, Pawn)  # Verifica que pawn es una instancia de Pawn
+class TestPawn(unittest.TestCase):
 
-#     def test_str(self):
-#         white_pawn = Pawn("WHITE")
-#         black_pawn= Pawn("BLACK")
-#         self.assertEqual(str(white_pawn), "♙")  # Verifica la representación en cadena para WHITE
-#         self.assertEqual(str(black_pawn), "♟")  # Verifica la representación en cadena para BLACK
+    def setUp(self):
+        self.white_pawn = Pawn("WHITE")
+        self.black_pawn = Pawn("BLACK")
 
-#     def test_first_move(self):
-#         pawn = Pawn("WHITE")  # Creo objeto pawn de la Clase Pawn
-#         # El primer movimiento puede ser dos casillas hacia adelante
-#         self.assertTrue(pawn.is_valid_movement(1, 3, 3, 3))
+    def test_pawn_str(self):
+        utils = TestUtils()
+        utils.check_piece_str(self, Pawn, "♙", "♟")
 
-#     def test_second_move_one_square(self):
-#         pawn = Pawn("WHITE")
-#         # Simulamos que el primer movimiento ya se hizo
-#         pawn.first_move = False
-#         # Movimiento de una casilla hacia adelante después del primer movimiento
-#         self.assertTrue(pawn.is_valid_movement(3, 4, 0, 0))
-    
-#     def test_invalid_first_move_three_squares(self):
-#         pawn = Pawn("WHITE")
-#         # Un peón no puede moverse tres casillas hacia adelante
-#         self.assertFalse(pawn.is_valid_movement(1, 4, 0, 0))
-    
-#     def test_move_in_same_column(self):
-#         pawn = Pawn("BLACK")
-#         # Movimiento en la misma columna, que es válido para peones
-#         self.assertTrue(pawn.is_valid_movement(1, 2, 0, 0))  # Movimiento normal de una casilla
+    def test_init(self):
+        self.assertIsInstance(self.white_pawn, Pawn)
+        self.assertEqual(self.white_pawn.color, "WHITE")
+        self.assertTrue(self.white_pawn.first_move)
 
-#     def test_invalid_diagonal_move(self):
-#         pawn = Pawn("BLACK")
-#         # Movimiento diagonal inválido sin capturar otra pieza
-#         self.assertFalse(pawn.is_valid_movement(1, 2, 0, 1))
+        self.assertIsInstance(self.black_pawn, Pawn)
+        self.assertEqual(self.black_pawn.color, "BLACK")
+        self.assertTrue(self.black_pawn.first_move)
 
+    def test_is_valid_movement_white(self):
+        # Primer movimiento
+        self.assertTrue(self.white_pawn.is_valid_movement(6, 0, 5, 0))  # Un paso adelante
+        self.assertTrue(self.white_pawn.is_valid_movement(6, 0, 4, 0))  # Dos pasos adelante
+        self.assertFalse(self.white_pawn.is_valid_movement(6, 0, 3, 0))  # Tres pasos adelante (inválido)
 
+        # Movimiento diagonal (captura)
+        self.assertTrue(self.white_pawn.is_valid_movement(6, 0, 5, 1))  # Captura a la derecha
+        self.assertTrue(self.white_pawn.is_valid_movement(6, 1, 5, 0))  # Captura a la izquierda
 
-# if __name__ == '__main__':
-#     unittest.main()
+        # Movimientos inválidos
+        self.assertFalse(self.white_pawn.is_valid_movement(6, 0, 6, 1))  # Movimiento lateral
+        self.assertFalse(self.white_pawn.is_valid_movement(6, 0, 7, 0))  # Movimiento hacia atrás
+
+        # Después del primer movimiento
+        self.white_pawn.complete_move()
+        self.assertTrue(self.white_pawn.is_valid_movement(5, 0, 4, 0))  # Un paso adelante
+        self.assertFalse(self.white_pawn.is_valid_movement(5, 0, 3, 0))  # Dos pasos adelante (ya no válido)
+
+    def test_is_valid_movement_black(self):
+        # Primer movimiento
+        self.assertTrue(self.black_pawn.is_valid_movement(1, 0, 2, 0))  # Un paso adelante
+        self.assertTrue(self.black_pawn.is_valid_movement(1, 0, 3, 0))  # Dos pasos adelante
+        self.assertFalse(self.black_pawn.is_valid_movement(1, 0, 4, 0))  # Tres pasos adelante (inválido)
+
+        # Movimiento diagonal (captura)
+        self.assertTrue(self.black_pawn.is_valid_movement(1, 0, 2, 1))  # Captura a la derecha
+        self.assertTrue(self.black_pawn.is_valid_movement(1, 1, 2, 0))  # Captura a la izquierda
+
+        # Movimientos inválidos
+        self.assertFalse(self.black_pawn.is_valid_movement(1, 0, 1, 1))  # Movimiento lateral
+        self.assertFalse(self.black_pawn.is_valid_movement(1, 0, 0, 0))  # Movimiento hacia atrás
+
+        # Después del primer movimiento
+        self.black_pawn.complete_move()
+        self.assertTrue(self.black_pawn.is_valid_movement(2, 0, 3, 0))  # Un paso adelante
+        self.assertFalse(self.black_pawn.is_valid_movement(2, 0, 4, 0))  # Dos pasos adelante (ya no válido)
+
+    def test_complete_move(self):
+        self.assertTrue(self.white_pawn.first_move)
+        self.white_pawn.complete_move()
+        self.assertFalse(self.white_pawn.first_move)
+
+        self.assertTrue(self.black_pawn.first_move)
+        self.black_pawn.complete_move()
+        self.assertFalse(self.black_pawn.first_move)
+
+if __name__ == '__main__':
+    unittest.main()

@@ -14,17 +14,45 @@ class Pawn(Piece):
     def __str__(self):
        return "♙" if self.color == "WHITE" else "♟"
     
-    def is_valid_movement(self, initial_row, final_row, initial_col, final_col):
-        return True
 
-    # # Significa que es un movimento en la misma columna
-    # def is_same_column(self, initial_col, final_col):
-    #     if initial_col == final_col:
-    #         return True
+
+    def is_valid_movement(self, initial_row, initial_col, final_row, final_col):
+        # print(f"Debugging is_valid_movement:")
+        # print(f"Color: {self.color}")
+        # print(f"Initial position: ({initial_row}, {initial_col})")
+        # print(f"Final position: ({final_row}, {final_col})")
+
+        # Determinar la dirección del movimiento según el color
+        direction = 1 if self.color.lower() == "black" else -1
+        print(f"Direction: {direction}")
         
-    # # Determina si el movimiento es para arriba o para abajo dependiendo el color.
-    # def is_moving_forward(self, initial_row, final_row, color):
-    #     if color == "WHITE":
-    #         return final_row < initial_row  # Blanco se mueve hacia arriba en el tablero
-    #     else:
-    #         return final_row > initial_row  # Negro se mueve hacia abajo en el tablero
+        # Calcular la diferencia en filas y columnas
+        row_diff = final_row - initial_row
+        col_diff = abs(final_col - initial_col)
+        print(f"Row difference: {row_diff}")
+        print(f"Column difference: {col_diff}")
+
+        # Movimiento hacia adelante
+        if col_diff == 0:
+            if self.first_move:
+                # Primer movimiento: puede avanzar una o dos casillas
+                valid = row_diff == direction or row_diff == 2 * direction
+                print(f"First move, forward movement valid: {valid}")
+                return valid
+            else:
+                # Después del primer movimiento: solo puede avanzar una casilla
+                valid = row_diff == direction
+                print(f"Not first move, forward movement valid: {valid}")
+                return valid
+        
+        # Movimiento diagonal (potencial captura)
+        elif col_diff == 1 and row_diff == direction:
+            print("Diagonal movement (capture) is valid")
+            return True
+        
+        print("Movement is not valid")
+        return False
+    
+    def complete_move(self):
+        if self.first_move:
+            self.first_move = False
