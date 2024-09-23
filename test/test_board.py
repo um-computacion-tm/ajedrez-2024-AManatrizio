@@ -95,6 +95,81 @@ class TestBoard(unittest.TestCase):
             actual_output = fake_output.getvalue()
 
         self.assertEqual(actual_output, expected_output)
+    
+    def test_move_piece_capture(self):
+        # Colocar una pieza enemiga en una posición
+        self.board.matrix[3][3] = Pawn("BLACK")
+        
+        # Mover una pieza blanca para capturar
+        self.board.move_piece(6, 3, 3, 3)
+        
+        # Verificar que la captura se realizó correctamente
+        self.assertIsInstance(self.board.matrix[3][3], Pawn)
+        self.assertEqual(self.board.matrix[3][3].color, "WHITE")
+
+    def test_move_piece_same_color(self):
+        # Intentar capturar una pieza del mismo color
+        with patch('builtins.print') as mock_print:
+            self.board.move_piece(7, 0, 7, 1)
+        mock_print.assert_called_with("No se puede capturar una pieza del mismo color.")
+
+    def test_is_path_clear_horizontal_blocked(self):
+        # Colocar una pieza en el camino horizontal
+        self.board.matrix[0][2] = Pawn("BLACK")
+        self.assertFalse(self.board.is_path_clear(0, 0, 0, 3, "horizontal"))
+
+    def test_is_path_clear_vertical_blocked(self):
+        # Colocar una pieza en el camino vertical
+        self.board.matrix[2][0] = Pawn("BLACK")
+        self.assertFalse(self.board.is_path_clear(0, 0, 3, 0, "vertical"))
+
+    def test_is_path_clear_diagonal_blocked(self):
+        # Colocar una pieza en el camino diagonal
+        self.board.matrix[2][2] = Pawn("BLACK")
+        self.assertFalse(self.board.is_path_clear(0, 0, 3, 3, "diagonal"))
+
+    def test_is_path_clear_invalid_movement(self):
+        # Probar un tipo de movimiento inválido
+        self.assertFalse(self.board.is_path_clear(0, 0, 2, 1, "invalid"))
+
+    def test_move_piece_pawn_first_move(self):
+        pawn = self.board.matrix[6][0]
+        self.board.move_piece(6, 0, 4, 0)
+        self.assertFalse(pawn.first_move)
+
+    def test_update_capture_count_white(self):
+        # Verificar que las capturas blancas se incrementen
+        initial_white_captures = self.board.white_captures
+        self.board.update_capture_count("WHITE")
+        self.assertEqual(self.board.white_captures, initial_white_captures + 1)
+
+    def test_update_capture_count_black(self):
+        # Verificar que las capturas negras se incrementen
+        initial_black_captures = self.board.black_captures
+        self.board.update_capture_count("BLACK")
+        self.assertEqual(self.board.black_captures, initial_black_captures + 1)
+
+    def test_get_capture_counts(self):
+        self.board.white_captures = 2
+        self.board.black_captures = 3
+        capture_counts = self.board.get_capture_counts()
+        self.assertEqual(capture_counts["white_captures"], 2)
+        self.assertEqual(capture_counts["black_captures"], 3)
+    
+    def test_print_capture_counts(self):
+        self.board.white_captures = 2
+        self.board.black_captures = 3
+        with patch('builtins.print') as mock_print:
+            self.board.print_capture_counts()
+            mock_print.assert_any_call("Piezas blancas capturadas: 2")
+            mock_print.assert_any_call("Piezas negras capturadas: 3")
+
+
+
+
+
+
+
 
 
 

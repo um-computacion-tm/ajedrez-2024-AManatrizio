@@ -12,6 +12,9 @@ class Board:
     def __init__(self):
         # Crear un tablero vacío de 8x8 y agrega las piezas en su posicion.
         self.matrix = [[None for _ in range(8)] for _ in range(8)]
+        self.white_captures = 0  # Contador de piezas blancas capturadas
+        self.black_captures = 0  # Contador de piezas negras capturadas
+        self.king_captured = False  # Indicador si el rey ha sido capturado
 
         # negras
         self.matrix[0][0] = Rook(color= "BLACK") # Torre
@@ -80,12 +83,17 @@ class Board:
         
         # Verificar si hay una pieza en la casilla de destino
         if self.has_piece(m_fila, m_columna):
-            # Obtener el color de la pieza en la casilla de destino
-            color_destino = self.get_color(m_fila, m_columna)
+            # Obtener la pieza en la casilla de destino
+            pieza_capturada = self.matrix[m_fila][m_columna]
+            color_destino = pieza_capturada.color
             
             # Verificar si es una pieza del color opuesto
             if color_destino != pieza.color:
                 print(f"Captura realizada en ({m_fila}, {m_columna})")
+                
+                # Actualizar el contador de capturas
+                self.update_capture_count(color_destino)
+                
                 # Eliminar la pieza capturada
                 self.matrix[m_fila][m_columna] = None
                 
@@ -97,21 +105,37 @@ class Board:
         print(f"Moviendo pieza: {pieza} de ({p_fila}, {p_columna}) a ({m_fila}, {m_columna})")
         self.matrix[p_fila][p_columna] = None
         self.matrix[m_fila][m_columna] = pieza
+
+        if isinstance(pieza, Pawn):
+            pieza.complete_move()
+            
         print("Movimiento realizado. Estado del tablero actualizado.")
-
-    # def move_piece(self, p_fila, p_columna, m_fila, m_columna):
-    #     pieza = self.matrix[p_fila][p_columna]
-    #     print(f"Moviendo pieza: {pieza} de ({p_fila}, {p_columna}) a ({m_fila}, {m_columna})")
-    #     self.matrix[p_fila][p_columna] = None
-    #     self.matrix[m_fila][m_columna] = pieza
-    #     print("Movimiento realizado. Estado del tablero actualizado.")
-
         
+        self.print_capture_counts()
+    
 
-    # Verifica si el camino está libre entre dos posiciones dadas, según el tipo de movimiento.
-    # 'movement_type' puede ser 'horizontal', 'vertical' o 'diagonal'.
-    # Llama a funciones específicas para cada tipo de movimiento y devuelve True si no hay
-    # piezas bloqueando el camino; False en caso contrario.
+    def update_capture_count(self, color_destino):
+        """
+        Actualiza el contador de capturas basado en el color de la pieza capturada.
+        """
+        if color_destino == "WHITE":
+            self.white_captures += 1
+        else:
+            self.black_captures += 1
+    
+
+
+    def get_capture_counts(self):
+        return {"white_captures": self.white_captures, "black_captures": self.black_captures}
+    
+
+
+    def print_capture_counts(self):
+        print(f"Piezas blancas capturadas: {self.white_captures}")
+        print(f"Piezas negras capturadas: {self.black_captures}")
+
+
+
     def is_path_clear(self, initial_row, initial_col, final_row, final_col, movement_type):
         print(f"Checking path from ({initial_row}, {initial_col}) to ({final_row}, {final_col}) - {movement_type}")
         if movement_type == "horizontal":
