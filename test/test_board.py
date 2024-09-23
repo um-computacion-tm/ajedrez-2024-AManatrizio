@@ -9,19 +9,16 @@ from game.pawn import Pawn
 from unittest.mock import patch
 from io import StringIO
 
-class TestBoard(unittest.TestCase):
-
+class TestBoardSetup(unittest.TestCase):
     def setUp(self):
-        self.board = Board()  # Crea una instancia de Board para usar en las pruebas
+        self.board = Board()
 
     def test_init(self):
-        # Testea que se crea el tablero de 8x8
         self.assertEqual(len(self.board.matrix), 8)
         for row in self.board.matrix:
             self.assertEqual(len(row), 8)
 
     def test_piece(self):
-        # Verifica la correcta colocación de piezas iniciales
         self.assertIsInstance(self.board.matrix[0][0], Rook)
         self.assertIsInstance(self.board.matrix[0][7], Rook)
         self.assertIsInstance(self.board.matrix[0][1], Knight)
@@ -33,41 +30,61 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(self.board.matrix[0][0].color, "BLACK")
         self.assertEqual(self.board.matrix[7][3].color, "WHITE")
 
+class TestBoardHelperMethods(unittest.TestCase):
+    def setUp(self):
+        self.board = Board()
+
     def test_is_out_of_board(self):
-        # Verifica si una posición está dentro o fuera del tablero
         self.assertTrue(self.board.is_out_of_board(0, 0))
         self.assertFalse(self.board.is_out_of_board(9, 9))
         self.assertFalse(self.board.is_out_of_board(8, 8))
 
     def test_get_color(self):
-        # Verifica el color de la pieza en una posición específica
         self.assertEqual(self.board.get_color(7, 3), "WHITE")
         self.assertEqual(self.board.get_color(0, 0), "BLACK")
 
     def test_has_piece(self):
-        # Verifica si hay una pieza en una posición específica
         self.assertTrue(self.board.has_piece(0, 0))
-        self.assertFalse(self.board.has_piece(4, 4))  # Asumiendo que esta posición está vacía
+        self.assertFalse(self.board.has_piece(4, 4))
 
     def test_is_valid_move(self):
-        # Verifica la validez de los movimientos
-        self.assertTrue(self.board.is_valid_move(0, 0, 1, 0))  # Movimiento válido
-        self.assertFalse(self.board.is_valid_move(0, 0, 8, 8))  # Movimiento inválido
+        self.assertTrue(self.board.is_valid_move(0, 0, 1, 0))
+        self.assertFalse(self.board.is_valid_move(0, 0, 8, 8))
+
+class TestBoardPathClear(unittest.TestCase):
+    def setUp(self):
+        self.board = Board()
 
     def test_is_path_clear(self):
         self.assertTrue(self.board.is_path_clear(3, 0, 3, 7, 'horizontal'))
 
     def test_horizontal_path_blocked(self):
-        # Verifica si un camino horizontal está bloqueado
         self.assertFalse(self.board.is_path_clear(0, 0, 0, 7, 'horizontal'))
 
     def test_vertical_path_blocked(self):
-        # Coloca una pieza en el camino vertical y verifica si está bloqueado
-        self.board.matrix[3][0] = Pawn(color="BLACK")  # Coloca una pieza en el camino
+        self.board.matrix[3][0] = Pawn(color="BLACK")
         self.assertFalse(self.board.is_path_clear(1, 0, 4, 0, 'vertical'))
 
+    def test_is_path_clear_horizontal_blocked(self):
+        self.board.matrix[0][2] = Pawn("BLACK")
+        self.assertFalse(self.board.is_path_clear(0, 0, 0, 3, "horizontal"))
+
+    def test_is_path_clear_vertical_blocked(self):
+        self.board.matrix[2][0] = Pawn("BLACK")
+        self.assertFalse(self.board.is_path_clear(0, 0, 3, 0, "vertical"))
+
+    def test_is_path_clear_diagonal_blocked(self):
+        self.board.matrix[2][2] = Pawn("BLACK")
+        self.assertFalse(self.board.is_path_clear(0, 0, 3, 3, "diagonal"))
+
+    def test_is_path_clear_invalid_movement(self):
+        self.assertFalse(self.board.is_path_clear(0, 0, 2, 1, "invalid"))
+
+class TestBoardDisplay(unittest.TestCase):
+    def setUp(self):
+        self.board = Board()
+
     def test_display_board(self):
-        # Verifica la salida de la representación del tablero
         expected_output = (
             "    0   1   2   3   4   5   6   7\n"
             "  +---+---+---+---+---+---+---+---+\n"
@@ -95,56 +112,37 @@ class TestBoard(unittest.TestCase):
             actual_output = fake_output.getvalue()
 
         self.assertEqual(actual_output, expected_output)
-    
+
+class TestBoardMovement(unittest.TestCase):
+    def setUp(self):
+        self.board = Board()
+
     def test_move_piece_capture(self):
-        # Colocar una pieza enemiga en una posición
         self.board.matrix[3][3] = Pawn("BLACK")
-        
-        # Mover una pieza blanca para capturar
         self.board.move_piece(6, 3, 3, 3)
-        
-        # Verificar que la captura se realizó correctamente
         self.assertIsInstance(self.board.matrix[3][3], Pawn)
         self.assertEqual(self.board.matrix[3][3].color, "WHITE")
 
     def test_move_piece_same_color(self):
-        # Intentar capturar una pieza del mismo color
         with patch('builtins.print') as mock_print:
             self.board.move_piece(7, 0, 7, 1)
         mock_print.assert_called_with("No se puede capturar una pieza del mismo color.")
-
-    def test_is_path_clear_horizontal_blocked(self):
-        # Colocar una pieza en el camino horizontal
-        self.board.matrix[0][2] = Pawn("BLACK")
-        self.assertFalse(self.board.is_path_clear(0, 0, 0, 3, "horizontal"))
-
-    def test_is_path_clear_vertical_blocked(self):
-        # Colocar una pieza en el camino vertical
-        self.board.matrix[2][0] = Pawn("BLACK")
-        self.assertFalse(self.board.is_path_clear(0, 0, 3, 0, "vertical"))
-
-    def test_is_path_clear_diagonal_blocked(self):
-        # Colocar una pieza en el camino diagonal
-        self.board.matrix[2][2] = Pawn("BLACK")
-        self.assertFalse(self.board.is_path_clear(0, 0, 3, 3, "diagonal"))
-
-    def test_is_path_clear_invalid_movement(self):
-        # Probar un tipo de movimiento inválido
-        self.assertFalse(self.board.is_path_clear(0, 0, 2, 1, "invalid"))
 
     def test_move_piece_pawn_first_move(self):
         pawn = self.board.matrix[6][0]
         self.board.move_piece(6, 0, 4, 0)
         self.assertFalse(pawn.first_move)
 
+class TestBoardCaptures(unittest.TestCase):
+    def setUp(self):
+        self.board = Board()
+
     def test_update_capture_count_white(self):
-        # Verificar que las capturas blancas se incrementen
         initial_white_captures = self.board.white_captures
         self.board.update_capture_count("WHITE")
         self.assertEqual(self.board.white_captures, initial_white_captures + 1)
 
     def test_update_capture_count_black(self):
-        # Verificar que las capturas negras se incrementen
         initial_black_captures = self.board.black_captures
         self.board.update_capture_count("BLACK")
         self.assertEqual(self.board.black_captures, initial_black_captures + 1)
@@ -155,7 +153,7 @@ class TestBoard(unittest.TestCase):
         capture_counts = self.board.get_capture_counts()
         self.assertEqual(capture_counts["white_captures"], 2)
         self.assertEqual(capture_counts["black_captures"], 3)
-    
+
     def test_print_capture_counts(self):
         self.board.white_captures = 2
         self.board.black_captures = 3
@@ -163,11 +161,6 @@ class TestBoard(unittest.TestCase):
             self.board.print_capture_counts()
             mock_print.assert_any_call("Piezas blancas capturadas: 2")
             mock_print.assert_any_call("Piezas negras capturadas: 3")
-
-
-
-
-
 
 
 
