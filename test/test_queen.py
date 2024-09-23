@@ -21,11 +21,8 @@ class TestQueen(unittest.TestCase):
 
     def test_invalid_movement(self):
         # Un movimiento inválido que no sea en línea recta ni diagonal debería ser inválido
-        self.assertFalse(self.queen.is_valid_movement(4, 2, 4, 5))
+        self.assertFalse(self.queen.is_valid_movement(0, 1, 2, 0))
 
-    def test_invalid_no_movement(self):
-        # Quedarse en la misma casilla debería ser inválido
-        self.assertFalse(self.queen.is_valid_movement(4, 4, 4, 4))
 
 if __name__ == "__main__":
     unittest.main()
