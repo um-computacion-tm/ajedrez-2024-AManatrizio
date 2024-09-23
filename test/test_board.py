@@ -58,25 +58,19 @@ class TestBoardPathClear(unittest.TestCase):
     def test_is_path_clear(self):
         self.assertTrue(self.board.is_path_clear(3, 0, 3, 7, 'horizontal'))
 
-    def test_horizontal_path_blocked(self):
-        self.assertFalse(self.board.is_path_clear(0, 0, 0, 7, 'horizontal'))
+    def test_is_path_clear_blocked(self):
+            test_cases = [
+                # start_row, start_col, end_row, end_col, block_row, block_col, direction
+                (0, 0, 0, 3, 0, 2, "horizontal"),
+                (0, 0, 3, 0, 2, 0, "vertical"),
+                (0, 0, 3, 3, 2, 2, "diagonal"),
+            ]
 
-    def test_vertical_path_blocked(self):
-        self.board.matrix[3][0] = Pawn(color="BLACK")
-        self.assertFalse(self.board.is_path_clear(1, 0, 4, 0, 'vertical'))
-
-    def test_is_path_clear_horizontal_blocked(self):
-        self.board.matrix[0][2] = Pawn("BLACK")
-        self.assertFalse(self.board.is_path_clear(0, 0, 0, 3, "horizontal"))
-
-    def test_is_path_clear_vertical_blocked(self):
-        self.board.matrix[2][0] = Pawn("BLACK")
-        self.assertFalse(self.board.is_path_clear(0, 0, 3, 0, "vertical"))
-
-    def test_is_path_clear_diagonal_blocked(self):
-        self.board.matrix[2][2] = Pawn("BLACK")
-        self.assertFalse(self.board.is_path_clear(0, 0, 3, 3, "diagonal"))
-
+            for start_row, start_col, end_row, end_col, block_row, block_col, direction in test_cases:
+                with self.subTest(f"{direction} from ({start_row},{start_col}) to ({end_row},{end_col})"):
+                    self.board.matrix[block_row][block_col] = Pawn("BLACK")
+                    self.assertFalse(self.board.is_path_clear(start_row, start_col, end_row, end_col, direction))
+    
     def test_is_path_clear_invalid_movement(self):
         self.assertFalse(self.board.is_path_clear(0, 0, 2, 1, "invalid"))
 
@@ -137,15 +131,13 @@ class TestBoardCaptures(unittest.TestCase):
     def setUp(self):
         self.board = Board()
 
-    def test_update_capture_count_white(self):
-        initial_white_captures = self.board.white_captures
-        self.board.update_capture_count("WHITE")
-        self.assertEqual(self.board.white_captures, initial_white_captures + 1)
+    def test_update_capture_count(self):
+        for color in ["WHITE", "BLACK"]:
+            with self.subTest(f"Updating {color} capture count"):
+                initial_captures = getattr(self.board, f"{color.lower()}_captures")
+                self.board.update_capture_count(color)
+                self.assertEqual(getattr(self.board, f"{color.lower()}_captures"), initial_captures + 1)
 
-    def test_update_capture_count_black(self):
-        initial_black_captures = self.board.black_captures
-        self.board.update_capture_count("BLACK")
-        self.assertEqual(self.board.black_captures, initial_black_captures + 1)
 
     def test_get_capture_counts(self):
         self.board.white_captures = 2

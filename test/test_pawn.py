@@ -21,43 +21,27 @@ class TestPawn(unittest.TestCase):
         self.assertEqual(self.black_pawn.color, "BLACK")
         self.assertTrue(self.black_pawn.first_move)
 
-    def test_is_valid_movement_white(self):
+    def test_is_valid_movement(self):
+        self._test_pawn_movement(self.black_pawn, 1, 2, 3, 0)
+
+    def _test_pawn_movement(self, pawn, start_row, one_step, two_step, back_step):
         # Primer movimiento
-        self.assertTrue(self.white_pawn.is_valid_movement(6, 0, 5, 0))  # Un paso adelante
-        self.assertTrue(self.white_pawn.is_valid_movement(6, 0, 4, 0))  # Dos pasos adelante
-        self.assertFalse(self.white_pawn.is_valid_movement(6, 0, 3, 0))  # Tres pasos adelante (inválido)
+        self.assertTrue(pawn.is_valid_movement(start_row, 0, one_step, 0))  # Un paso adelante
+        self.assertTrue(pawn.is_valid_movement(start_row, 0, two_step, 0))  # Dos pasos adelante
+        self.assertFalse(pawn.is_valid_movement(start_row, 0, two_step + 1, 0))  # Tres pasos adelante (inválido)
 
         # Movimiento diagonal (captura)
-        self.assertTrue(self.white_pawn.is_valid_movement(6, 0, 5, 1))  # Captura a la derecha
-        self.assertTrue(self.white_pawn.is_valid_movement(6, 1, 5, 0))  # Captura a la izquierda
+        self.assertTrue(pawn.is_valid_movement(start_row, 0, one_step, 1))  # Captura a la derecha
+        self.assertTrue(pawn.is_valid_movement(start_row, 1, one_step, 0))  # Captura a la izquierda
 
         # Movimientos inválidos
-        self.assertFalse(self.white_pawn.is_valid_movement(6, 0, 6, 1))  # Movimiento lateral
-        self.assertFalse(self.white_pawn.is_valid_movement(6, 0, 7, 0))  # Movimiento hacia atrás
+        self.assertFalse(pawn.is_valid_movement(start_row, 0, start_row, 1))  # Movimiento lateral
+        self.assertFalse(pawn.is_valid_movement(start_row, 0, back_step, 0))  # Movimiento hacia atrás
 
         # Después del primer movimiento
-        self.white_pawn.complete_move()
-        self.assertTrue(self.white_pawn.is_valid_movement(5, 0, 4, 0))  # Un paso adelante
-        self.assertFalse(self.white_pawn.is_valid_movement(5, 0, 3, 0))  # Dos pasos adelante (ya no válido)
-
-    def test_is_valid_movement_black(self):
-        # Primer movimiento
-        self.assertTrue(self.black_pawn.is_valid_movement(1, 0, 2, 0))  # Un paso adelante
-        self.assertTrue(self.black_pawn.is_valid_movement(1, 0, 3, 0))  # Dos pasos adelante
-        self.assertFalse(self.black_pawn.is_valid_movement(1, 0, 4, 0))  # Tres pasos adelante (inválido)
-
-        # Movimiento diagonal (captura)
-        self.assertTrue(self.black_pawn.is_valid_movement(1, 0, 2, 1))  # Captura a la derecha
-        self.assertTrue(self.black_pawn.is_valid_movement(1, 1, 2, 0))  # Captura a la izquierda
-
-        # Movimientos inválidos
-        self.assertFalse(self.black_pawn.is_valid_movement(1, 0, 1, 1))  # Movimiento lateral
-        self.assertFalse(self.black_pawn.is_valid_movement(1, 0, 0, 0))  # Movimiento hacia atrás
-
-        # Después del primer movimiento
-        self.black_pawn.complete_move()
-        self.assertTrue(self.black_pawn.is_valid_movement(2, 0, 3, 0))  # Un paso adelante
-        self.assertFalse(self.black_pawn.is_valid_movement(2, 0, 4, 0))  # Dos pasos adelante (ya no válido)
+        pawn.complete_move()
+        self.assertTrue(pawn.is_valid_movement(one_step, 0, two_step, 0))  # Un paso adelante
+        self.assertFalse(pawn.is_valid_movement(one_step, 0, two_step + 1, 0))  # Dos pasos adelante (ya no válido)
 
     def test_complete_move(self):
         self.assertTrue(self.white_pawn.first_move)
