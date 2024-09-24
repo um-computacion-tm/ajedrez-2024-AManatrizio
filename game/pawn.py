@@ -53,6 +53,7 @@ class Pawn(Piece):
         print("Movement is not valid")
         return False
     
+    # Cambia el estado de que ya no es el primer movimiento del peon
     def complete_move(self):
         if self.first_move:
             self.first_move = False
