@@ -5,6 +5,7 @@ def main():
     chess = Chess()
     while not chess.is_over():
         chess.display_board()
+        chess.get_captures
         print(f"Turno de: {chess.current_player}")
         piece = input("Enter your piece to move: ")
         move = input("Enter where to move: ")

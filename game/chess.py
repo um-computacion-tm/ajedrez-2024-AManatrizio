@@ -3,6 +3,10 @@ class Chess:
     def __init__(self):
         self.board = Board() # Creo objeto board
         self.current_player = "WHITE" # Inicializo el primer jugador en blanco
+    
+    def get_captures(self):
+        return self.board.get_capture_counts()
+
 
     def is_over(self):
         # Implementar lógica para determinar si el juego ha terminado
@@ -13,12 +17,14 @@ class Chess:
         self.board.display_board()
 
 
+
     def play_move(self, piece , move):
         print(f"Intentando mover pieza {piece} a {move}")
         p_fila, p_columna = self.parse_move(piece)
         m_fila, m_columna = self.parse_move(move)
         #initial_pos, final_pos = self.parse_move(move)
         if self.board.is_valid_move(p_fila, p_columna, m_fila, m_columna):
+            print("movimiento valido")
             self.board.move_piece(p_fila, p_columna, m_fila, m_columna)
             print(f"Posiciones convertidas: inicial ({p_fila}, {p_columna}), final ({m_fila}, {m_columna})")
             self.switch_turn()
