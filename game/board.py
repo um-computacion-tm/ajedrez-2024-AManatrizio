@@ -82,13 +82,11 @@ class Board:
             if not isinstance(pieza, Knight):
                 movement_type = self.get_movement_type(p_fila, p_columna, m_fila, m_columna)
                 if not self.is_path_clear(p_fila, p_columna, m_fila, m_columna, movement_type):
-                    print("El camino no está despejado")
                     flag = False
             
             # Verificar si la casilla de destino está vacía o contiene una pieza del oponente
             if self.has_piece(m_fila, m_columna):
                 if self.get_color(m_fila, m_columna) == pieza.color:
-                    print("No se puede capturar una pieza del mismo color")
                     flag = False
         
         return flag
