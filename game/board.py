@@ -62,34 +62,40 @@ class Board:
             return piece.color
         
     def is_valid_move(self, p_fila, p_columna, m_fila, m_columna):
-        flag = True
-        
+        if not self.are_positions_valid(p_fila, p_columna, m_fila, m_columna):
+            return False
+
+        pieza = self.matrix[p_fila][p_columna]
+        if not self.is_piece_movement_valid(pieza, p_fila, p_columna, m_fila, m_columna):
+            return False
+
+        if not isinstance(pieza, Knight):
+            movement_type = self.get_movement_type(p_fila, p_columna, m_fila, m_columna)
+            if not self.is_path_clear(p_fila, p_columna, m_fila, m_columna, movement_type):
+                return False
+
+        return self.is_destination_valid(pieza, m_fila, m_columna)
+
+    def are_positions_valid(self, p_fila, p_columna, m_fila, m_columna):
         if not self.is_out_of_board(p_fila, p_columna) or not self.is_out_of_board(m_fila, m_columna):
             print("La posición está fuera del tablero")
-            flag = False
-        
+            return False
         if not self.has_piece(p_fila, p_columna):
             print(f"No hay una pieza en {p_fila} {p_columna}")
-            flag = False
-        
-        if flag:  # Solo continuar si las verificaciones anteriores pasaron
-            pieza = self.matrix[p_fila][p_columna]
-            if not pieza.is_valid_movement(p_fila, p_columna, m_fila, m_columna):
-                print("Movimiento no válido para esta pieza")
-                flag = False
-            
-            # Verificar si el camino está despejado (excepto para el Caballo)
-            if not isinstance(pieza, Knight):
-                movement_type = self.get_movement_type(p_fila, p_columna, m_fila, m_columna)
-                if not self.is_path_clear(p_fila, p_columna, m_fila, m_columna, movement_type):
-                    flag = False
-            
-            # Verificar si la casilla de destino está vacía o contiene una pieza del oponente
-            if self.has_piece(m_fila, m_columna):
-                if self.get_color(m_fila, m_columna) == pieza.color:
-                    flag = False
-        
-        return flag
+            return False
+        return True
+
+    def is_piece_movement_valid(self, pieza, p_fila, p_columna, m_fila, m_columna):
+        if not pieza.is_valid_movement(p_fila, p_columna, m_fila, m_columna):
+            print("Movimiento no válido para esta pieza")
+            return False
+        return True
+
+    def is_destination_valid(self, pieza, m_fila, m_columna):
+        if self.has_piece(m_fila, m_columna):
+            if self.get_color(m_fila, m_columna) == pieza.color:
+                return False
+        return True
 
     def get_movement_type(self, p_fila, p_columna, m_fila, m_columna):
         if p_fila == m_fila:

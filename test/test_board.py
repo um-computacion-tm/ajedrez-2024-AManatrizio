@@ -153,6 +153,66 @@ class TestBoardCaptures(unittest.TestCase):
             mock_print.assert_any_call("Piezas blancas capturadas: 2")
             mock_print.assert_any_call("Piezas negras capturadas: 3")
 
+    
+class TestBoardAdditional(unittest.TestCase):
+    def setUp(self):
+        self.board = Board()
+
+    def test_is_valid_move(self):
+        # Prueba para movimiento fuera del tablero
+        self.assertFalse(self.board.is_valid_move(8, 0, 9, 0))
+        
+        # Prueba para mover una pieza que no existe
+        self.assertFalse(self.board.is_valid_move(3, 3, 4, 4))
+        
+        # Prueba para un movimiento válido de un peón
+        self.assertTrue(self.board.is_valid_move(6, 0, 5, 0))
+        
+        # Prueba para un movimiento válido de un caballo
+        self.assertTrue(self.board.is_valid_move(7, 1, 5, 2))
+        
+        # Prueba para un movimiento inválido (camino bloqueado)
+        self.assertFalse(self.board.is_valid_move(7, 0, 5, 0))
+
+    def test_move_piece(self):
+        # Mover un peón
+        self.board.move_piece(6, 0, 4, 0)
+        self.assertIsInstance(self.board.matrix[4][0], Pawn)
+        self.assertIsNone(self.board.matrix[6][0])
+        
+        # Intentar mover a una posición ocupada por una pieza del mismo color
+        with patch('builtins.print') as mock_print:
+            self.board.move_piece(7, 0, 7, 1)
+            mock_print.assert_called_with("No se puede capturar una pieza del mismo color.")
+        
+        # Capturar una pieza
+        self.board.matrix[3][0] = Pawn("BLACK")
+        self.board.move_piece(4, 0, 3, 0)
+        self.assertIsInstance(self.board.matrix[3][0], Pawn)
+        self.assertEqual(self.board.matrix[3][0].color, "WHITE")
+        self.assertEqual(self.board.black_captures, 1)
+
+    def test_is_path_clear(self):
+        # Camino horizontal bloqueado
+        self.board.matrix[0][2] = None  # Eliminar el alfil negro
+        self.assertFalse(self.board.is_path_clear(0, 0, 0, 3, "horizontal"))
+        
+        # Camino vertical bloqueado
+        self.assertFalse(self.board.is_path_clear(6, 0, 1, 0, "vertical"))
+        
+        # Camino diagonal bloqueado
+        self.board.matrix[5][1] = Pawn("WHITE")
+        self.assertFalse(self.board.is_path_clear(6, 0, 4, 2, "diagonal"))
+        
+        # Camino diagonal libre
+        self.board.matrix[5][1] = None
+        self.assertTrue(self.board.is_path_clear(6, 0, 4, 2, "diagonal"))
+
+    def test_get_movement_type(self):
+        self.assertEqual(self.board.get_movement_type(0, 0, 0, 3), "horizontal")
+        self.assertEqual(self.board.get_movement_type(0, 0, 3, 0), "vertical")
+        self.assertEqual(self.board.get_movement_type(0, 0, 3, 3), "diagonal")
+        self.assertEqual(self.board.get_movement_type(0, 0, 1, 2), "invalid")
 
 
 
