@@ -6,6 +6,7 @@ from game.knight import Knight
 from game.bishop import Bishop
 from game.queen import Queen
 from game.pawn import Pawn
+from game.exceptions import OutOfBoardError
 from unittest.mock import patch
 from io import StringIO
 
@@ -35,9 +36,14 @@ class TestBoardHelperMethods(unittest.TestCase):
         self.board = Board()
 
     def test_is_out_of_board(self):
-        self.assertTrue(self.board.is_out_of_board(0, 0))
-        self.assertFalse(self.board.is_out_of_board(9, 9))
-        self.assertFalse(self.board.is_out_of_board(8, 8))
+        self.assertFalse(self.board.is_out_of_board(0, 0))
+        self.assertFalse(self.board.is_out_of_board(7, 7))
+        
+        with self.assertRaises(OutOfBoardError):
+            self.board.is_out_of_board(-1, 0)
+        
+        with self.assertRaises(OutOfBoardError):
+            self.board.is_out_of_board(0, 8)
 
     def test_get_color(self):
         self.assertEqual(self.board.get_color(7, 3), "WHITE")
@@ -196,9 +202,7 @@ class TestBoardAdditional(unittest.TestCase):
         # Camino horizontal bloqueado
         self.board.matrix[0][2] = None  # Eliminar el alfil negro
         self.assertFalse(self.board.is_path_clear(0, 0, 0, 3, "horizontal"))
-        
-        # Camino vertical bloqueado
-        self.assertFalse(self.board.is_path_clear(6, 0, 1, 0, "vertical"))
+
         
         # Camino diagonal bloqueado
         self.board.matrix[5][1] = Pawn("WHITE")

@@ -5,7 +5,7 @@ from .bishop import Bishop
 from .rook import Rook
 from .pawn import Pawn
 from .piece import Piece
-# from exceptions import InvalidMoveError, PieceNotFoundError, OutOfBoardError
+from .exceptions import OutOfBoardError
 
 class Board:
 
@@ -43,10 +43,9 @@ class Board:
    # Revisa si la posicion ingresada no sale fuera de los limites del tablero
     def is_out_of_board(self, row, col):
         if 0 <= row < 8 and 0 <= col < 8:
-            return True  # Está dentro de los límites del tablero
+            return False  # Está dentro de los límites del tablero
         else:
-            return False  # Está fuera de los límites del tablero
-    
+            raise OutOfBoardError(f"La posición ({row}, {col}) está fuera del tablero")
 
     def has_piece(self, row, col):
         if self.matrix[row][col] is not None:
@@ -62,24 +61,37 @@ class Board:
             return piece.color
         
     def is_valid_move(self, p_fila, p_columna, m_fila, m_columna):
-        if not self.are_positions_valid(p_fila, p_columna, m_fila, m_columna):
-            return False
-
-        pieza = self.matrix[p_fila][p_columna]
-        if not self.is_piece_movement_valid(pieza, p_fila, p_columna, m_fila, m_columna):
-            return False
-
-        if not isinstance(pieza, Knight):
-            movement_type = self.get_movement_type(p_fila, p_columna, m_fila, m_columna)
-            if not self.is_path_clear(p_fila, p_columna, m_fila, m_columna, movement_type):
+        try:
+            if not self.are_positions_valid(p_fila, p_columna, m_fila, m_columna):
                 return False
 
-        return self.is_destination_valid(pieza, m_fila, m_columna)
+            pieza = self.matrix[p_fila][p_columna]
+            if not self.is_piece_movement_valid(pieza, p_fila, p_columna, m_fila, m_columna):
+                return False
+
+            if not isinstance(pieza, Knight):
+                movement_type = self.get_movement_type(p_fila, p_columna, m_fila, m_columna)
+                if not self.is_path_clear(p_fila, p_columna, m_fila, m_columna, movement_type):
+                    return False
+
+            # Permitir la captura de piezas del oponente
+            if self.has_piece(m_fila, m_columna):
+                if self.get_color(m_fila, m_columna) == pieza.color:
+                    return False
+                else:
+                    return True  # Permitir la captura de piezas del oponente
+
+            return True
+        except OutOfBoardError:
+            return False
 
     def are_positions_valid(self, p_fila, p_columna, m_fila, m_columna):
-        if not self.is_out_of_board(p_fila, p_columna) or not self.is_out_of_board(m_fila, m_columna):
-            print("La posición está fuera del tablero")
+        try:
+            self.is_out_of_board(p_fila, p_columna)
+            self.is_out_of_board(m_fila, m_columna)
+        except OutOfBoardError:
             return False
+        
         if not self.has_piece(p_fila, p_columna):
             print(f"No hay una pieza en {p_fila} {p_columna}")
             return False
@@ -120,6 +132,10 @@ class Board:
             # Verificar si es una pieza del color opuesto
             if color_destino != pieza.color:
                 print(f"Captura realizada en ({m_fila}, {m_columna})")
+
+                if isinstance(pieza_capturada, King):
+                    self.king_captured = True
+                    print(f"¡El rey {color_destino} ha sido capturado! Fin del juego.")
                 
                 # Actualizar el contador de capturas
                 self.update_capture_count(color_destino)
@@ -171,23 +187,26 @@ class Board:
         if movement_type == "horizontal":
             return self.is_horizontal_path_clear(initial_row, initial_col, final_col)
         elif movement_type == "vertical":
-            return self.is_vertical_path_clear(initial_col, initial_row, final_row)  # Cambiado el orden de los argumentos
+            return self.is_vertical_path_clear(initial_col, initial_row, final_row)
         elif movement_type == "diagonal":
             return self.is_diagonal_path_clear(initial_row, initial_col, final_row, final_col)
         return False
 
     def is_horizontal_path_clear(self, row, initial_col, final_col):
-        # Verifica el camino horizontal
+        print(f"Checking horizontal path from ({row}, {initial_col}) to ({row}, {final_col})")
         step = 1 if final_col > initial_col else -1
         for col in range(initial_col + step, final_col, step):
+            print(f"Checking position ({row}, {col})")
             if self.matrix[row][col] is not None:
+                print(f"Found piece at ({row}, {col})")
                 return False
+        print("Path is clear")
         return True
 
     def is_vertical_path_clear(self, col, initial_row, final_row):
         print(f"Checking vertical path from ({initial_row}, {col}) to ({final_row}, {col})")
         step = 1 if final_row > initial_row else -1
-        for row in range(initial_row + step, final_row + step, step):  # Añadido +step al final_row para incluir la última posición
+        for row in range(initial_row + step, final_row, step):
             print(f"Checking position ({row}, {col})")
             if self.matrix[row][col] is not None:
                 print(f"Found piece at ({row}, {col})")

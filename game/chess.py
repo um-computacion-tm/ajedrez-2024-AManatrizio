@@ -3,14 +3,31 @@ class Chess:
     def __init__(self):
         self.board = Board() # Creo objeto board
         self.current_player = "WHITE" # Inicializo el primer jugador en blanco
+        self.mutual_agreement_to_end = False 
+
     
     def get_captures(self):
         return self.board.get_capture_counts()
 
 
     def is_over(self):
-        # Implementar lógica para determinar si el juego ha terminado
-        pass
+        # Un jugador se queda sin piezas (15 capturas, excluyendo el rey)
+        if self.board.white_captures == 15 or self.board.black_captures == 15:
+            return True
+        
+        # El rey ha sido capturado
+        if self.board.king_captured:
+            return True
+        
+        # Los jugadores deciden terminar la partida de mutuo acuerdo
+        if self.mutual_agreement_to_end:
+            return True
+        
+        return False
+
+    # Cambia el estado de mutual_agreement_to_end
+    def end_game_by_agreement(self):
+        self.mutual_agreement_to_end = True
 
 
     def display_board(self):
