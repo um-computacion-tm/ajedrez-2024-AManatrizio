@@ -47,6 +47,7 @@ class Board:
         else:
             raise OutOfBoardError(f"La posición ({row}, {col}) está fuera del tablero")
 
+    # Revisa si hay una pieza en la posicion a la que se quiere ir
     def has_piece(self, row, col):
         if self.matrix[row][col] is not None:
             return True
@@ -59,31 +60,37 @@ class Board:
             return None
         else:
             return piece.color
-        
+    
+
+    # Verifica si un movimiento es válido en el tablero de ajedrez.
+    # Combina todas las reglas de movimiento en una sola función.
     def is_valid_move(self, p_fila, p_columna, m_fila, m_columna):
+        is_valid = False
         try:
-            if not self.are_positions_valid(p_fila, p_columna, m_fila, m_columna):
-                return False
-
-            pieza = self.matrix[p_fila][p_columna]
-            if not self.is_piece_movement_valid(pieza, p_fila, p_columna, m_fila, m_columna):
-                return False
-
-            if not isinstance(pieza, Knight):
-                movement_type = self.get_movement_type(p_fila, p_columna, m_fila, m_columna)
-                if not self.is_path_clear(p_fila, p_columna, m_fila, m_columna, movement_type):
-                    return False
-
-            # Permitir la captura de piezas del oponente
-            if self.has_piece(m_fila, m_columna):
-                if self.get_color(m_fila, m_columna) == pieza.color:
-                    return False
-                else:
-                    return True  # Permitir la captura de piezas del oponente
-
-            return True
+            if self.are_positions_valid(p_fila, p_columna, m_fila, m_columna):
+                pieza = self.matrix[p_fila][p_columna]
+                if self.is_piece_movement_valid(pieza, p_fila, p_columna, m_fila, m_columna):
+                    if isinstance(pieza, Knight) or self.is_path_clear_for_non_knight(pieza, p_fila, p_columna, m_fila, m_columna):
+                        is_valid = self.is_destination_valid(pieza, m_fila, m_columna)
         except OutOfBoardError:
-            return False
+            is_valid = False
+        
+        return is_valid
+
+
+    # Verifica si el camino está libre para piezas que no son caballos.
+    # Los caballos pueden saltar sobre otras piezas, por eso se tratan diferente.
+    def is_path_clear_for_non_knight(self, pieza, p_fila, p_columna, m_fila, m_columna):
+        movement_type = self.get_movement_type(p_fila, p_columna, m_fila, m_columna)
+        return self.is_path_clear(p_fila, p_columna, m_fila, m_columna, movement_type)
+
+
+    # Comprueba si el destino del movimiento es válido.
+    # Permite mover a un espacio vacío o capturar una pieza del oponente.
+    def is_destination_valid(self, pieza, m_fila, m_columna):
+        if not self.has_piece(m_fila, m_columna):
+            return True
+        return self.get_color(m_fila, m_columna) != pieza.color 
 
     def are_positions_valid(self, p_fila, p_columna, m_fila, m_columna):
         try:
@@ -93,13 +100,13 @@ class Board:
             return False
         
         if not self.has_piece(p_fila, p_columna):
-            print(f"No hay una pieza en {p_fila} {p_columna}")
+            #print(f"No hay una pieza en {p_fila} {p_columna}")
             return False
         return True
 
     def is_piece_movement_valid(self, pieza, p_fila, p_columna, m_fila, m_columna):
         if not pieza.is_valid_movement(p_fila, p_columna, m_fila, m_columna):
-            print("Movimiento no válido para esta pieza")
+            #print("Movimiento no válido para esta pieza")
             return False
         return True
 
@@ -131,7 +138,7 @@ class Board:
             
             # Verificar si es una pieza del color opuesto
             if color_destino != pieza.color:
-                print(f"Captura realizada en ({m_fila}, {m_columna})")
+                #print(f"Captura realizada en ({m_fila}, {m_columna})")
 
                 if isinstance(pieza_capturada, King):
                     self.king_captured = True
@@ -148,16 +155,16 @@ class Board:
                 return
     
         # Mover la pieza
-        print(f"Moviendo pieza: {pieza} de ({p_fila}, {p_columna}) a ({m_fila}, {m_columna})")
+        #print(f"Moviendo pieza: {pieza} de ({p_fila}, {p_columna}) a ({m_fila}, {m_columna})")
         self.matrix[p_fila][p_columna] = None
         self.matrix[m_fila][m_columna] = pieza
 
         if isinstance(pieza, Pawn):
             pieza.complete_move()
             
-        print("Movimiento realizado. Estado del tablero actualizado.")
+        #print("Movimiento realizado. Estado del tablero actualizado.")
         
-        self.print_capture_counts()
+        #self.print_capture_counts()
     
 
     def update_capture_count(self, color_destino):
@@ -176,14 +183,14 @@ class Board:
     
 
 
-    def print_capture_counts(self):
-        print(f"Piezas blancas capturadas: {self.white_captures}")
-        print(f"Piezas negras capturadas: {self.black_captures}")
+    # def print_capture_counts(self):
+    #     print(f"Piezas blancas capturadas: {self.white_captures}")
+    #     print(f"Piezas negras capturadas: {self.black_captures}")
 
 
 
     def is_path_clear(self, initial_row, initial_col, final_row, final_col, movement_type):
-        print(f"Checking path from ({initial_row}, {initial_col}) to ({final_row}, {final_col}) - {movement_type}")
+        #print(f"Checking path from ({initial_row}, {initial_col}) to ({final_row}, {final_col}) - {movement_type}")
         if movement_type == "horizontal":
             return self.is_horizontal_path_clear(initial_row, initial_col, final_col)
         elif movement_type == "vertical":
@@ -193,42 +200,42 @@ class Board:
         return False
 
     def is_horizontal_path_clear(self, row, initial_col, final_col):
-        print(f"Checking horizontal path from ({row}, {initial_col}) to ({row}, {final_col})")
+        #print(f"Checking horizontal path from ({row}, {initial_col}) to ({row}, {final_col})")
         step = 1 if final_col > initial_col else -1
         for col in range(initial_col + step, final_col, step):
-            print(f"Checking position ({row}, {col})")
+            #print(f"Checking position ({row}, {col})")
             if self.matrix[row][col] is not None:
-                print(f"Found piece at ({row}, {col})")
+                #print(f"Found piece at ({row}, {col})")
                 return False
-        print("Path is clear")
+        #print("Path is clear")
         return True
 
     def is_vertical_path_clear(self, col, initial_row, final_row):
-        print(f"Checking vertical path from ({initial_row}, {col}) to ({final_row}, {col})")
+        #print(f"Checking vertical path from ({initial_row}, {col}) to ({final_row}, {col})")
         step = 1 if final_row > initial_row else -1
         for row in range(initial_row + step, final_row, step):
-            print(f"Checking position ({row}, {col})")
+            #print(f"Checking position ({row}, {col})")
             if self.matrix[row][col] is not None:
-                print(f"Found piece at ({row}, {col})")
+                #print(f"Found piece at ({row}, {col})")
                 return False
-        print("Path is clear")
+        #print("Path is clear")
         return True
 
     def is_diagonal_path_clear(self, initial_row, initial_col, final_row, final_col):
-        print(f"Checking diagonal path from ({initial_row}, {initial_col}) to ({final_row}, {final_col})")
+        #print(f"Checking diagonal path from ({initial_row}, {initial_col}) to ({final_row}, {final_col})")
         row_step = 1 if final_row > initial_row else -1
         col_step = 1 if final_col > initial_col else -1
         row, col = initial_row + row_step, initial_col + col_step
         
         while (row != final_row) and (col != final_col):
-            print(f"Checking position ({row}, {col})")
+            #print(f"Checking position ({row}, {col})")
             if self.matrix[row][col] is not None:
-                print(f"Found piece at ({row}, {col})")
+                #print(f"Found piece at ({row}, {col})")
                 return False
             row += row_step
             col += col_step
         
-        print("Path is clear")
+        #print("Path is clear")
         return True
 
 

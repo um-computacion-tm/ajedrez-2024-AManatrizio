@@ -17,16 +17,16 @@ class King(Piece):
         row_diff = abs(final_row - initial_row)
         col_diff = abs(final_col - initial_col)
         
-        print(f"Debug: King movement from ({initial_row}, {initial_col}) to ({final_row}, {final_col})")
-        print(f"Debug: row_diff = {row_diff}, col_diff = {col_diff}")
+        #print(f"Debug: King movement from ({initial_row}, {initial_col}) to ({final_row}, {final_col})")
+        #print(f"Debug: row_diff = {row_diff}, col_diff = {col_diff}")
         
         # El rey puede moverse una casilla en cualquier dirección
         # Por lo tanto, la diferencia máxima en filas y columnas debe ser 1
         if row_diff <= 1 and col_diff <= 1 and (row_diff != 0 or col_diff != 0):
-            print("Debug: Valid king movement")
+            #print("Debug: Valid king movement")
             return True
         else:
-            print("Debug: Invalid king movement")
+            #print("Debug: Invalid king movement")
             return False
         
             
