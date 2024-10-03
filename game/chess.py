@@ -1,37 +1,37 @@
 from .board import Board
 class Chess:
     def __init__(self):
-        self.board = Board() # Creo objeto board
-        self.current_player = "WHITE" # Inicializo el primer jugador en blanco
-        self.mutual_agreement_to_end = False 
+        self.__board__ = Board() # Creo objeto __board__
+        self.__current_player__ = "WHITE" # Inicializo el primer jugador en blanco
+        self.__mutual_agreement_to_end__ = False 
 
     
     def get_captures(self):
-        return self.board.get_capture_counts()
+        return self.__board__.get_capture_counts()
 
 
     def is_over(self):
         # Un jugador se queda sin piezas (15 capturas, excluyendo el rey)
-        if self.board.white_captures == 15 or self.board.black_captures == 15:
+        if self.__board__.__white_captures__ == 15 or self.__board__.__black_captures__ == 15:
             return True
         
         # El rey ha sido capturado
-        if self.board.king_captured:
+        if self.__board__.__king_captured__:
             return True
         
         # Los jugadores deciden terminar la partida de mutuo acuerdo
-        if self.mutual_agreement_to_end:
+        if self.__mutual_agreement_to_end__:
             return True
         
         return False
 
-    # Cambia el estado de mutual_agreement_to_end
+    # Cambia el estado de __mutual_agreement_to_end__
     def end_game_by_agreement(self):
-        self.mutual_agreement_to_end = True
+        self.__mutual_agreement_to_end__ = True
 
 
     def display_board(self):
-        self.board.display_board()
+        self.__board__.display_board()
 
 
 
@@ -41,28 +41,28 @@ class Chess:
         m_fila, m_columna = self.parse_move(move)
         
         # Verificar si es el turno del jugador correcto
-        piece_color = self.board.get_color(p_fila, p_columna)
-        if piece_color != self.current_player:
+        piece_color = self.__board__.get_color(p_fila, p_columna)
+        if piece_color != self.__current_player__:
             #print(f"No es el turno de las piezas {piece_color}")
             return False
 
         # Verificar si el destino tiene una pieza del oponente para capturar
-        if self.board.has_piece(m_fila, m_columna):
-            target_color = self.board.get_color(m_fila, m_columna)
-            if target_color != self.current_player:
+        if self.__board__.has_piece(m_fila, m_columna):
+            target_color = self.__board__.get_color(m_fila, m_columna)
+            if target_color != self.__current_player__:
                 #print(f"Capturando pieza de {target_color}")
-                self.board.update_capture_count(target_color)  # Aumentar el conteo de capturas
+                self.__board__.update_capture_count(target_color)  # Aumentar el conteo de capturas
             else:
                 #print("No puedes capturar tu propia pieza")
                 return False
 
         # Verificar si el movimiento es válido
-        if self.board.is_valid_move(p_fila, p_columna, m_fila, m_columna):
+        if self.__board__.is_valid_move(p_fila, p_columna, m_fila, m_columna):
             #print("Movimiento válido")
-            self.board.move_piece(p_fila, p_columna, m_fila, m_columna)
+            self.__board__.move_piece(p_fila, p_columna, m_fila, m_columna)
             #print(f"Posiciones convertidas: inicial ({p_fila}, {p_columna}), final ({m_fila}, {m_columna})")
             self.switch_turn()
-            #print(f"Turno de: {self.current_player}")
+            #print(f"Turno de: {self.__current_player__}")
             return True
         else:
             #print("Movimiento no válido")
@@ -81,4 +81,4 @@ class Chess:
 
     # Cambio de turno
     def switch_turn(self):
-        self.current_player = "BLACK" if self.current_player == "WHITE" else "WHITE"
+        self.__current_player__ = "BLACK" if self.__current_player__ == "WHITE" else "WHITE"

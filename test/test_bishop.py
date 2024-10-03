@@ -14,10 +14,10 @@ class TestBishop(unittest.TestCase):
     def test_init(self):
         bishop = Bishop("WHITE")
         self.assertIsInstance(bishop, Bishop)
-        self.assertEqual(bishop.color, "WHITE")
+        self.assertEqual(bishop.__color__, "WHITE")
         
         bishop_black = Bishop("BLACK")
-        self.assertEqual(bishop_black.color, "BLACK")
+        self.assertEqual(bishop_black.__color__, "BLACK")
 
     def test_is_valid_movement(self):
         # Movimientos válidos

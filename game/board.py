@@ -11,34 +11,34 @@ class Board:
 
     def __init__(self):
         # Crear un tablero vacío de 8x8 y agrega las piezas en su posicion.
-        self.matrix = [[None for _ in range(8)] for _ in range(8)]
-        self.white_captures = 0  # Contador de piezas blancas capturadas
-        self.black_captures = 0  # Contador de piezas negras capturadas
-        self.king_captured = False  # Indicador si el rey ha sido capturado
+        self.__matrix__ = [[None for _ in range(8)] for _ in range(8)]
+        self.__white_captures__ = 0  # Contador de piezas blancas capturadas
+        self.__black_captures__ = 0  # Contador de piezas negras capturadas
+        self.__king_captured__ = False  # Indicador si el rey ha sido capturado
 
         # negras
-        self.matrix[0][0] = Rook(color= "BLACK") # Torre
-        self.matrix[0][7] = Rook(color= "BLACK") # Torre
-        self.matrix[0][1] = Knight(color= "BLACK") # Caballo
-        self.matrix[0][6] = Knight(color= "BLACK") # Caballo
-        self.matrix[0][2] = Bishop(color= "BLACK") # Alfil
-        self.matrix[0][5] = Bishop(color= "BLACK") # Alfil
-        self.matrix[0][3] = Queen(color= "BLACK") # Reina
-        self.matrix[0][4] = King(color= "BLACK") # Rey
+        self.__matrix__[0][0] = Rook(__color__= "BLACK") # Torre
+        self.__matrix__[0][7] = Rook(__color__= "BLACK") # Torre
+        self.__matrix__[0][1] = Knight(__color__= "BLACK") # Caballo
+        self.__matrix__[0][6] = Knight(__color__= "BLACK") # Caballo
+        self.__matrix__[0][2] = Bishop(__color__= "BLACK") # Alfil
+        self.__matrix__[0][5] = Bishop(__color__= "BLACK") # Alfil
+        self.__matrix__[0][3] = Queen(__color__= "BLACK") # Reina
+        self.__matrix__[0][4] = King(__color__= "BLACK") # Rey
         for i in range(8):
-            self.matrix[1][i] = Pawn(color= "BLACK") # Peon
+            self.__matrix__[1][i] = Pawn(__color__= "BLACK") # Peon
 
         # blancas
-        self.matrix[7][7] = Rook(color= "WHITE") # Torre
-        self.matrix[7][0] = Rook(color= "WHITE") # Torre
-        self.matrix[7][1] = Knight(color= "WHITE") # Caballo
-        self.matrix[7][6] = Knight(color= "WHITE") # Caballo
-        self.matrix[7][2] = Bishop(color= "WHITE") # Alfil
-        self.matrix[7][5] = Bishop(color= "WHITE") # Alfil
-        self.matrix[7][3] = Queen(color= "WHITE") # Reina
-        self.matrix[7][4] = King(color= "WHITE") # Rey
+        self.__matrix__[7][7] = Rook(__color__= "WHITE") # Torre
+        self.__matrix__[7][0] = Rook(__color__= "WHITE") # Torre
+        self.__matrix__[7][1] = Knight(__color__= "WHITE") # Caballo
+        self.__matrix__[7][6] = Knight(__color__= "WHITE") # Caballo
+        self.__matrix__[7][2] = Bishop(__color__= "WHITE") # Alfil
+        self.__matrix__[7][5] = Bishop(__color__= "WHITE") # Alfil
+        self.__matrix__[7][3] = Queen(__color__= "WHITE") # Reina
+        self.__matrix__[7][4] = King(__color__= "WHITE") # Rey
         for i in range(8):
-            self.matrix[6][i] = Pawn(color= "WHITE") # Peon
+            self.__matrix__[6][i] = Pawn(__color__= "WHITE") # Peon
     
    # Revisa si la posicion ingresada no sale fuera de los limites del tablero
     def is_out_of_board(self, row, col):
@@ -49,17 +49,17 @@ class Board:
 
     # Revisa si hay una pieza en la posicion a la que se quiere ir
     def has_piece(self, row, col):
-        if self.matrix[row][col] is not None:
+        if self.__matrix__[row][col] is not None:
             return True
         return False
 
 
     def get_color(self, row, col):
-        piece = self.matrix[row][col]
+        piece = self.__matrix__[row][col]
         if piece is None:
             return None
         else:
-            return piece.color
+            return piece.__color__
     
 
     # Verifica si un movimiento es válido en el tablero de ajedrez.
@@ -68,7 +68,7 @@ class Board:
         is_valid = False
         try:
             if self.are_positions_valid(p_fila, p_columna, m_fila, m_columna):
-                pieza = self.matrix[p_fila][p_columna]
+                pieza = self.__matrix__[p_fila][p_columna]
                 if self.is_piece_movement_valid(pieza, p_fila, p_columna, m_fila, m_columna):
                     if isinstance(pieza, Knight) or self.is_path_clear_for_non_knight(pieza, p_fila, p_columna, m_fila, m_columna):
                         is_valid = self.is_destination_valid(pieza, m_fila, m_columna)
@@ -90,7 +90,7 @@ class Board:
     def is_destination_valid(self, pieza, m_fila, m_columna):
         if not self.has_piece(m_fila, m_columna):
             return True
-        return self.get_color(m_fila, m_columna) != pieza.color 
+        return self.get___color__(m_fila, m_columna) != pieza.__color__ 
 
     def are_positions_valid(self, p_fila, p_columna, m_fila, m_columna):
         try:
@@ -112,7 +112,7 @@ class Board:
 
     def is_destination_valid(self, pieza, m_fila, m_columna):
         if self.has_piece(m_fila, m_columna):
-            if self.get_color(m_fila, m_columna) == pieza.color:
+            if self.get___color__(m_fila, m_columna) == pieza.__color__:
                 return False
         return True
 
@@ -128,27 +128,27 @@ class Board:
     
 
     def move_piece(self, p_fila, p_columna, m_fila, m_columna):
-        pieza = self.matrix[p_fila][p_columna]
+        pieza = self.__matrix__[p_fila][p_columna]
         
         # Verificar si hay una pieza en la casilla de destino
         if self.has_piece(m_fila, m_columna):
             # Obtener la pieza en la casilla de destino
-            pieza_capturada = self.matrix[m_fila][m_columna]
-            color_destino = pieza_capturada.color
+            pieza_capturada = self.__matrix__[m_fila][m_columna]
+            __color___destino = pieza_capturada.__color__
             
-            # Verificar si es una pieza del color opuesto
-            if color_destino != pieza.color:
+            # Verificar si es una pieza del __color__ opuesto
+            if __color___destino != pieza.__color__:
                 #print(f"Captura realizada en ({m_fila}, {m_columna})")
 
                 if isinstance(pieza_capturada, King):
-                    self.king_captured = True
-                    print(f"¡El rey {color_destino} ha sido capturado! Fin del juego.")
+                    self.__king_captured__ = True
+                    print(f"¡El rey {__color___destino} ha sido capturado! Fin del juego.")
                 
                 # Actualizar el contador de capturas
-                self.update_capture_count(color_destino)
+                self.update_capture_count(__color___destino)
                 
                 # Eliminar la pieza capturada
-                self.matrix[m_fila][m_columna] = None
+                self.__matrix__[m_fila][m_columna] = None
                 
             else:
                 print("No se puede capturar una pieza del mismo color.")
@@ -156,37 +156,33 @@ class Board:
     
         # Mover la pieza
         #print(f"Moviendo pieza: {pieza} de ({p_fila}, {p_columna}) a ({m_fila}, {m_columna})")
-        self.matrix[p_fila][p_columna] = None
-        self.matrix[m_fila][m_columna] = pieza
+        self.__matrix__[p_fila][p_columna] = None
+        self.__matrix__[m_fila][m_columna] = pieza
 
         if isinstance(pieza, Pawn):
             pieza.complete_move()
-            
-        #print("Movimiento realizado. Estado del tablero actualizado.")
-        
-        #self.print_capture_counts()
+
+            # Verificar si el peón ha llegado al final del tablero
+            if (pieza.__color__ == "WHITE" and m_fila == 0) or (pieza.__color__ == "BLACK" and m_fila == 7):
+                return "PROMOTE"  # Indicar que se necesita una promoción
+    
+        return "NORMAL"  # Movimiento normal sin promoción
     
 
-    def update_capture_count(self, color_destino):
+    def update_capture_count(self, __color___destino):
         """
-        Actualiza el contador de capturas basado en el color de la pieza capturada.
+        Actualiza el contador de capturas basado en el __color__ de la pieza capturada.
         """
-        if color_destino == "WHITE":
-            self.white_captures += 1
+        if __color___destino == "WHITE":
+            self.__white_captures__ += 1
         else:
-            self.black_captures += 1
+            self.__black_captures__ += 1
     
 
 
     def get_capture_counts(self):
-        return {"white_captures": self.white_captures, "black_captures": self.black_captures}
+        return {"__white_captures__": self.__white_captures__, "__black_captures__": self.__black_captures__}
     
-
-
-    # def print_capture_counts(self):
-    #     print(f"Piezas blancas capturadas: {self.white_captures}")
-    #     print(f"Piezas negras capturadas: {self.black_captures}")
-
 
 
     def is_path_clear(self, initial_row, initial_col, final_row, final_col, movement_type):
@@ -204,7 +200,7 @@ class Board:
         step = 1 if final_col > initial_col else -1
         for col in range(initial_col + step, final_col, step):
             #print(f"Checking position ({row}, {col})")
-            if self.matrix[row][col] is not None:
+            if self.__matrix__[row][col] is not None:
                 #print(f"Found piece at ({row}, {col})")
                 return False
         #print("Path is clear")
@@ -215,7 +211,7 @@ class Board:
         step = 1 if final_row > initial_row else -1
         for row in range(initial_row + step, final_row, step):
             #print(f"Checking position ({row}, {col})")
-            if self.matrix[row][col] is not None:
+            if self.__matrix__[row][col] is not None:
                 #print(f"Found piece at ({row}, {col})")
                 return False
         #print("Path is clear")
@@ -229,7 +225,7 @@ class Board:
         
         while (row != final_row) and (col != final_col):
             #print(f"Checking position ({row}, {col})")
-            if self.matrix[row][col] is not None:
+            if self.__matrix__[row][col] is not None:
                 #print(f"Found piece at ({row}, {col})")
                 return False
             row += row_step
@@ -245,7 +241,7 @@ class Board:
         print("  +" + "---+" * 8)
 
         # Mostrar el tablero con guías de filas (0-7)
-        for i, row in enumerate(self.matrix, start=0):
+        for i, row in enumerate(self.__matrix__, start=0):
             row_display = []
             for piece in row:
                 if piece is None:

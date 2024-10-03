@@ -15,21 +15,21 @@ class TestBoardSetup(unittest.TestCase):
         self.board = Board()
 
     def test_init(self):
-        self.assertEqual(len(self.board.matrix), 8)
-        for row in self.board.matrix:
+        self.assertEqual(len(self.board.__matrix__), 8)
+        for row in self.board.__matrix__:
             self.assertEqual(len(row), 8)
 
     def test_piece(self):
-        self.assertIsInstance(self.board.matrix[0][0], Rook)
-        self.assertIsInstance(self.board.matrix[0][7], Rook)
-        self.assertIsInstance(self.board.matrix[0][1], Knight)
-        self.assertIsInstance(self.board.matrix[0][6], Knight)
-        self.assertIsInstance(self.board.matrix[0][2], Bishop)
-        self.assertIsInstance(self.board.matrix[0][5], Bishop)
-        self.assertIsInstance(self.board.matrix[0][3], Queen)
-        self.assertIsInstance(self.board.matrix[0][4], King)
-        self.assertEqual(self.board.matrix[0][0].color, "BLACK")
-        self.assertEqual(self.board.matrix[7][3].color, "WHITE")
+        self.assertIsInstance(self.board.__matrix__[0][0], Rook)
+        self.assertIsInstance(self.board.__matrix__[0][7], Rook)
+        self.assertIsInstance(self.board.__matrix__[0][1], Knight)
+        self.assertIsInstance(self.board.__matrix__[0][6], Knight)
+        self.assertIsInstance(self.board.__matrix__[0][2], Bishop)
+        self.assertIsInstance(self.board.__matrix__[0][5], Bishop)
+        self.assertIsInstance(self.board.__matrix__[0][3], Queen)
+        self.assertIsInstance(self.board.__matrix__[0][4], King)
+        self.assertEqual(self.board.__matrix__[0][0].__color__, "BLACK")
+        self.assertEqual(self.board.__matrix__[7][3].__color__, "WHITE")
 
 class TestBoardHelperMethods(unittest.TestCase):
     def setUp(self):
@@ -73,7 +73,7 @@ class TestBoardPathClear(unittest.TestCase):
 
             for start_row, start_col, end_row, end_col, block_row, block_col, direction in test_cases:
                 with self.subTest(f"{direction} from ({start_row},{start_col}) to ({end_row},{end_col})"):
-                    self.board.matrix[block_row][block_col] = Pawn("BLACK")
+                    self.board.__matrix__[block_row][block_col] = Pawn("BLACK")
                     self.assertFalse(self.board.is_path_clear(start_row, start_col, end_row, end_col, direction))
     
     def test_is_path_clear_invalid_movement(self):
@@ -117,20 +117,20 @@ class TestBoardMovement(unittest.TestCase):
         self.board = Board()
 
     def test_move_piece_capture(self):
-        self.board.matrix[3][3] = Pawn("BLACK")
+        self.board.__matrix__[3][3] = Pawn("BLACK")
         self.board.move_piece(6, 3, 3, 3)
-        self.assertIsInstance(self.board.matrix[3][3], Pawn)
-        self.assertEqual(self.board.matrix[3][3].color, "WHITE")
+        self.assertIsInstance(self.board.__matrix__[3][3], Pawn)
+        self.assertEqual(self.board.__matrix__[3][3].__color__, "WHITE")
 
     def test_move_piece_same_color(self):
         with patch('builtins.print') as mock_print:
             self.board.move_piece(7, 0, 7, 1)
         mock_print.assert_called_with("No se puede capturar una pieza del mismo color.")
 
-    def test_move_piece_pawn_first_move(self):
-        pawn = self.board.matrix[6][0]
+    def test_move_piece_pawn___first_move__(self):
+        pawn = self.board.__matrix__[6][0]
         self.board.move_piece(6, 0, 4, 0)
-        self.assertFalse(pawn.first_move)
+        self.assertFalse(pawn.__first_move__)
 
 class TestBoardCaptures(unittest.TestCase):
     def setUp(self):
@@ -139,21 +139,21 @@ class TestBoardCaptures(unittest.TestCase):
     def test_update_capture_count(self):
         for color in ["WHITE", "BLACK"]:
             with self.subTest(f"Updating {color} capture count"):
-                initial_captures = getattr(self.board, f"{color.lower()}_captures")
+                initial_captures = getattr(self.board, f"__{color.lower()}_captures__")
                 self.board.update_capture_count(color)
-                self.assertEqual(getattr(self.board, f"{color.lower()}_captures"), initial_captures + 1)
+                self.assertEqual(getattr(self.board, f"__{color.lower()}_captures__"), initial_captures + 1)
 
 
     def test_get_capture_counts(self):
-        self.board.white_captures = 2
-        self.board.black_captures = 3
+        self.board.__white_captures__ = 2
+        self.board.__black_captures__ = 3
         capture_counts = self.board.get_capture_counts()
-        self.assertEqual(capture_counts["white_captures"], 2)
-        self.assertEqual(capture_counts["black_captures"], 3)
+        self.assertEqual(capture_counts["__white_captures__"], 2)
+        self.assertEqual(capture_counts["__black_captures__"], 3)
 
     def test_print_capture_counts(self):
-        self.board.white_captures = 2
-        self.board.black_captures = 3
+        self.board.__white_captures__ = 2
+        self.board.__black_captures__ = 3
         # with patch('builtins.print') as mock_print:
         #     self.board.print_capture_counts()
         #     mock_print.assert_any_call("Piezas blancas capturadas: 2")
@@ -183,8 +183,8 @@ class TestBoardAdditional(unittest.TestCase):
     def test_move_piece(self):
         # Mover un peón
         self.board.move_piece(6, 0, 4, 0)
-        self.assertIsInstance(self.board.matrix[4][0], Pawn)
-        self.assertIsNone(self.board.matrix[6][0])
+        self.assertIsInstance(self.board.__matrix__[4][0], Pawn)
+        self.assertIsNone(self.board.__matrix__[6][0])
         
         # Intentar mover a una posición ocupada por una pieza del mismo color
         with patch('builtins.print') as mock_print:
@@ -192,24 +192,24 @@ class TestBoardAdditional(unittest.TestCase):
             mock_print.assert_called_with("No se puede capturar una pieza del mismo color.")
         
         # Capturar una pieza
-        self.board.matrix[3][0] = Pawn("BLACK")
+        self.board.__matrix__[3][0] = Pawn("BLACK")
         self.board.move_piece(4, 0, 3, 0)
-        self.assertIsInstance(self.board.matrix[3][0], Pawn)
-        self.assertEqual(self.board.matrix[3][0].color, "WHITE")
-        self.assertEqual(self.board.black_captures, 1)
+        self.assertIsInstance(self.board.__matrix__[3][0], Pawn)
+        self.assertEqual(self.board.__matrix__[3][0].__color__, "WHITE")
+        self.assertEqual(self.board.__black_captures__, 1)
 
     def test_is_path_clear(self):
         # Camino horizontal bloqueado
-        self.board.matrix[0][2] = None  # Eliminar el alfil negro
+        self.board.__matrix__[0][2] = None  # Eliminar el alfil negro
         self.assertFalse(self.board.is_path_clear(0, 0, 0, 3, "horizontal"))
 
         
         # Camino diagonal bloqueado
-        self.board.matrix[5][1] = Pawn("WHITE")
+        self.board.__matrix__[5][1] = Pawn("WHITE")
         self.assertFalse(self.board.is_path_clear(6, 0, 4, 2, "diagonal"))
         
         # Camino diagonal libre
-        self.board.matrix[5][1] = None
+        self.board.__matrix__[5][1] = None
         self.assertTrue(self.board.is_path_clear(6, 0, 4, 2, "diagonal"))
 
     def test_get_movement_type(self):

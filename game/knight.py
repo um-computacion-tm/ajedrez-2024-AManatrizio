@@ -7,11 +7,11 @@
 from .piece import Piece
 
 class Knight(Piece):
-    def __init__(self, color):
-        super().__init__(color)
+    def __init__(self, __color__):
+        super().__init__(__color__)
     
     def __str__(self):
-        return "♘" if self.color == "WHITE" else "♞"
+        return "♘" if self.__color__ == "WHITE" else "♞"
     
 
     def is_valid_movement(self, initial_row, initial_col, final_row, final_col):

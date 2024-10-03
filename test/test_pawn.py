@@ -14,12 +14,12 @@ class TestPawn(unittest.TestCase):
 
     def test_init(self):
         self.assertIsInstance(self.white_pawn, Pawn)
-        self.assertEqual(self.white_pawn.color, "WHITE")
-        self.assertTrue(self.white_pawn.first_move)
+        self.assertEqual(self.white_pawn.__color__, "WHITE")
+        self.assertTrue(self.white_pawn.__first_move__)
 
         self.assertIsInstance(self.black_pawn, Pawn)
-        self.assertEqual(self.black_pawn.color, "BLACK")
-        self.assertTrue(self.black_pawn.first_move)
+        self.assertEqual(self.black_pawn.__color__, "BLACK")
+        self.assertTrue(self.black_pawn.__first_move__)
 
     def test_is_valid_movement(self):
         self._test_pawn_movement(self.black_pawn, 1, 2, 3, 0)
@@ -44,13 +44,13 @@ class TestPawn(unittest.TestCase):
         self.assertFalse(pawn.is_valid_movement(one_step, 0, two_step + 1, 0))  # Dos pasos adelante (ya no válido)
 
     def test_complete_move(self):
-        self.assertTrue(self.white_pawn.first_move)
+        self.assertTrue(self.white_pawn.__first_move__)
         self.white_pawn.complete_move()
-        self.assertFalse(self.white_pawn.first_move)
+        self.assertFalse(self.white_pawn.__first_move__)
 
-        self.assertTrue(self.black_pawn.first_move)
+        self.assertTrue(self.black_pawn.__first_move__)
         self.black_pawn.complete_move()
-        self.assertFalse(self.black_pawn.first_move)
+        self.assertFalse(self.black_pawn.__first_move__)
 
 if __name__ == '__main__':
     unittest.main()

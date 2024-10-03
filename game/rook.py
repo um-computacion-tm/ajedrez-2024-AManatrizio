@@ -2,11 +2,11 @@ from .piece import Piece
 
 class Rook(Piece):
 
-    def __init__(self, color):
-        super().__init__(color)
+    def __init__(self, __color__):
+        super().__init__(__color__)
     
     def __str__(self):
-        return "♖" if self.color == "WHITE" else "♜"
+        return "♖" if self.__color__ == "WHITE" else "♜"
 
     # Determina si el movimiento es horizontal o vertical
     def horizontal_or_vertical_movement(self, initial_row, final_row, initial_col, final_col):
