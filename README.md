@@ -30,12 +30,12 @@ Welcome to the **Chess Game project**, built with Python. This project allows yo
 - White always moves first.
 
 ## Movement Rules
-**King** (♔ / ♚): Moves one square in any direction.
-**Queen** (♕ / ♛): Moves any number of squares in any direction.
-**Rook** (♖ / ♜): Moves any number of squares horizontally or vertically.
-**Bishop** (♗ / ♝): Moves diagonally any number of squares.
-**Knight** (♘ / ♞): Moves in an "L" shape: two squares in one direction, then one square to the side.
-**Pawn** (♙ / ♟): Moves one square forward (or two squares on its first move) and captures diagonally.
+- **King** (♔ / ♚): Moves one square in any direction.
+- **Queen** (♕ / ♛): Moves any number of squares in any direction.
+- **Rook** (♖ / ♜): Moves any number of squares horizontally or vertically.
+- **Bishop** (♗ / ♝): Moves diagonally any number of squares.
+- **Knight** (♘ / ♞): Moves in an "L" shape: two squares in one direction, then one square to the side.
+- **Pawn** (♙ / ♟): Moves one square forward (or two squares on its first move) and captures diagonally.
 
 ### Special Moves
 - **Promotion:** A pawn that reaches the other side of the board can be promoted to any other piece (except the king).
