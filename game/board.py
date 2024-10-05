@@ -90,7 +90,7 @@ class Board:
     def is_destination_valid(self, pieza, m_fila, m_columna):
         if not self.has_piece(m_fila, m_columna):
             return True
-        return self.get___color__(m_fila, m_columna) != pieza.__color__ 
+        return self.get_color(m_fila, m_columna) != pieza.__color__ 
 
     def are_positions_valid(self, p_fila, p_columna, m_fila, m_columna):
         try:
@@ -112,7 +112,7 @@ class Board:
 
     def is_destination_valid(self, pieza, m_fila, m_columna):
         if self.has_piece(m_fila, m_columna):
-            if self.get___color__(m_fila, m_columna) == pieza.__color__:
+            if self.get_color(m_fila, m_columna) == pieza.__color__:
                 return False
         return True
 
@@ -128,34 +128,26 @@ class Board:
     
 
     def move_piece(self, p_fila, p_columna, m_fila, m_columna):
+        print(f"Iniciando movimiento de ({p_fila}, {p_columna}) a ({m_fila}, {m_columna})")
         pieza = self.__matrix__[p_fila][p_columna]
         
         # Verificar si hay una pieza en la casilla de destino
         if self.has_piece(m_fila, m_columna):
-            # Obtener la pieza en la casilla de destino
             pieza_capturada = self.__matrix__[m_fila][m_columna]
-            __color___destino = pieza_capturada.__color__
+            color_destino = pieza_capturada.__color__
             
-            # Verificar si es una pieza del __color__ opuesto
-            if __color___destino != pieza.__color__:
-                #print(f"Captura realizada en ({m_fila}, {m_columna})")
-
+            if color_destino != pieza.__color__:
                 if isinstance(pieza_capturada, King):
                     self.__king_captured__ = True
-                    print(f"¡El rey {__color___destino} ha sido capturado! Fin del juego.")
+                    print(f"¡El rey {color_destino} ha sido capturado! Fin del juego.")
                 
-                # Actualizar el contador de capturas
-                self.update_capture_count(__color___destino)
-                
-                # Eliminar la pieza capturada
+                self.update_capture_count(color_destino)
                 self.__matrix__[m_fila][m_columna] = None
-                
             else:
                 print("No se puede capturar una pieza del mismo color.")
-                return
-    
+                return "INVALID"
+
         # Mover la pieza
-        #print(f"Moviendo pieza: {pieza} de ({p_fila}, {p_columna}) a ({m_fila}, {m_columna})")
         self.__matrix__[p_fila][p_columna] = None
         self.__matrix__[m_fila][m_columna] = pieza
 
@@ -164,27 +156,59 @@ class Board:
 
             # Verificar si el peón ha llegado al final del tablero
             if (pieza.__color__ == "WHITE" and m_fila == 0) or (pieza.__color__ == "BLACK" and m_fila == 7):
-                return "PROMOTE"  # Indicar que se necesita una promoción
-    
-        return "NORMAL"  # Movimiento normal sin promoción
+                self.handle_pawn_promotion(m_fila, m_columna)
+                return "PROMOTED"
+
+        return "NORMAL"
+
+    def handle_pawn_promotion(self, fila, columna):
+        print("El peón ha llegado al final del tablero. Elige una pieza para promocionar:")
+        print("1. Reina")
+        print("2. Torre")
+        print("3. Alfil")
+        print("4. Caballo")
+        
+        choice = input("Ingresa el número de tu elección: ")
+        
+        pawn = self.__matrix__[fila][columna]
+        color = pawn.__color__
+        new_piece = None
+        
+        if choice == "1":
+            new_piece = Queen(color)
+        elif choice == "2":
+            new_piece = Rook(color)
+        elif choice == "3":
+            new_piece = Bishop(color)
+        elif choice == "4":
+            new_piece = Knight(color)
+        else:
+            #print("Elección no válida. Se promocionará a Reina por defecto.")
+            new_piece = Queen(color)
+        
+        self.__matrix__[fila][columna] = new_piece
+        #print(f"Peón promocionado a {type(new_piece).__name__}")
     
 
-    def update_capture_count(self, __color___destino):
-        """
-        Actualiza el contador de capturas basado en el __color__ de la pieza capturada.
-        """
-        if __color___destino == "WHITE":
-            self.__white_captures__ += 1
+    # Actualiza el contador de capturas basado en el color de la pieza capturada.
+    def update_capture_count(self, color_destino):
+        #print(f"Antes de la actualización - Capturas blancas: {self.__white_captures__}, Capturas negras: {self.__black_captures__}")
+        if color_destino == "WHITE":
+            self.__black_captures__ += 1  # Las negras capturaron una pieza blanca
+            #print(f"Pieza blanca capturada. Incrementando capturas negras.")
         else:
-            self.__black_captures__ += 1
-    
+            self.__white_captures__ += 1  # Las blancas capturaron una pieza negra
+            #print(f"Pieza negra capturada. Incrementando capturas blancas.")
+        #print(f"Después de la actualización - Capturas blancas: {self.__white_captures__}, Capturas negras: {self.__black_captures__}")
+        
 
 
     def get_capture_counts(self):
         return {"__white_captures__": self.__white_captures__, "__black_captures__": self.__black_captures__}
     
 
-
+    # Verifica que tipo de movimiento es luego lo pasa a otra funcion
+    # que determina si no hay nada en el camino
     def is_path_clear(self, initial_row, initial_col, final_row, final_col, movement_type):
         #print(f"Checking path from ({initial_row}, {initial_col}) to ({final_row}, {final_col}) - {movement_type}")
         if movement_type == "horizontal":

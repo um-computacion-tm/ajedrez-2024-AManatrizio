@@ -27,7 +27,7 @@ Welcome to the **Chess Game project**, built with Python. This project allows yo
 - Each player starts with 16 pieces:
 - **White pieces:** ♔ ♕ ♖ ♗ ♘ ♙
 - **Black pieces:** ♚ ♛ ♜ ♝ ♞ ♟
-- White always moves first.
+- **White** always moves first.
 
 ## Movement Rules
 - **King** (♔ / ♚): Moves one square in any direction.

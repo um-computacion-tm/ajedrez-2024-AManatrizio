@@ -51,7 +51,7 @@ class Chess:
             target_color = self.__board__.get_color(m_fila, m_columna)
             if target_color != self.__current_player__:
                 #print(f"Capturando pieza de {target_color}")
-                self.__board__.update_capture_count(target_color)  # Aumentar el conteo de capturas
+                pass
             else:
                 #print("No puedes capturar tu propia pieza")
                 return False
@@ -68,7 +68,6 @@ class Chess:
             #print("Movimiento no válido")
             return False
 
-        
 
 
     def parse_move(self, move):

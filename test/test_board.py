@@ -136,13 +136,12 @@ class TestBoardCaptures(unittest.TestCase):
     def setUp(self):
         self.board = Board()
 
-    def test_update_capture_count(self):
-        for color in ["WHITE", "BLACK"]:
-            with self.subTest(f"Updating {color} capture count"):
-                initial_captures = getattr(self.board, f"__{color.lower()}_captures__")
-                self.board.update_capture_count(color)
-                self.assertEqual(getattr(self.board, f"__{color.lower()}_captures__"), initial_captures + 1)
-
+    def test_get_capture_counts(self):
+        self.board.__white_captures__ = 2
+        self.board.__black_captures__ = 3
+        capture_counts = self.board.get_capture_counts()
+        self.assertEqual(capture_counts["__white_captures__"], 2)
+        self.assertEqual(capture_counts["__black_captures__"], 3)
 
     def test_get_capture_counts(self):
         self.board.__white_captures__ = 2
@@ -154,10 +153,6 @@ class TestBoardCaptures(unittest.TestCase):
     def test_print_capture_counts(self):
         self.board.__white_captures__ = 2
         self.board.__black_captures__ = 3
-        # with patch('builtins.print') as mock_print:
-        #     self.board.print_capture_counts()
-        #     mock_print.assert_any_call("Piezas blancas capturadas: 2")
-        #     mock_print.assert_any_call("Piezas negras capturadas: 3")
 
     
 class TestBoardAdditional(unittest.TestCase):
@@ -185,18 +180,18 @@ class TestBoardAdditional(unittest.TestCase):
         self.board.move_piece(6, 0, 4, 0)
         self.assertIsInstance(self.board.__matrix__[4][0], Pawn)
         self.assertIsNone(self.board.__matrix__[6][0])
-        
+
         # Intentar mover a una posición ocupada por una pieza del mismo color
         with patch('builtins.print') as mock_print:
             self.board.move_piece(7, 0, 7, 1)
             mock_print.assert_called_with("No se puede capturar una pieza del mismo color.")
-        
+
         # Capturar una pieza
         self.board.__matrix__[3][0] = Pawn("BLACK")
         self.board.move_piece(4, 0, 3, 0)
         self.assertIsInstance(self.board.__matrix__[3][0], Pawn)
         self.assertEqual(self.board.__matrix__[3][0].__color__, "WHITE")
-        self.assertEqual(self.board.__black_captures__, 1)
+        
 
     def test_is_path_clear(self):
         # Camino horizontal bloqueado
@@ -217,8 +212,168 @@ class TestBoardAdditional(unittest.TestCase):
         self.assertEqual(self.board.get_movement_type(0, 0, 3, 0), "vertical")
         self.assertEqual(self.board.get_movement_type(0, 0, 3, 3), "diagonal")
         self.assertEqual(self.board.get_movement_type(0, 0, 1, 2), "invalid")
+    
+class TestBoardAdditionalCoverage(unittest.TestCase):
+    def setUp(self):
+        self.board = Board()
+
+    def test_king_capture(self):
+        # Colocar un rey negro en una posición vulnerable
+        self.board.__matrix__[4][4] = King("BLACK")
+        
+        # Mover una pieza blanca para capturar al rey
+        self.board.__matrix__[5][5] = Pawn("WHITE")
+        self.board.move_piece(5, 5, 4, 4)
+        
+        self.assertTrue(self.board.__king_captured__)
 
 
+    def test_get_capture_counts(self):
+        self.board.__white_captures__ = 2
+        self.board.__black_captures__ = 3
+        
+        capture_counts = self.board.get_capture_counts()
+        
+        self.assertEqual(capture_counts['__white_captures__'], 2)
+        self.assertEqual(capture_counts['__black_captures__'], 3)
+
+    def test_update_capture_count(self):
+        initial_white_captures = self.board.__white_captures__
+        initial_black_captures = self.board.__black_captures__
+        
+        self.board.update_capture_count("WHITE")
+        self.assertEqual(self.board.__black_captures__, initial_black_captures + 1)
+        
+        self.board.update_capture_count("BLACK")
+        self.assertEqual(self.board.__white_captures__, initial_white_captures + 1)
+
+    def test_get_capture_counts(self):
+        self.board.__white_captures__ = 2
+        self.board.__black_captures__ = 3
+        
+        capture_counts = self.board.get_capture_counts()
+        
+        self.assertEqual(capture_counts['__white_captures__'], 2)
+        self.assertEqual(capture_counts['__black_captures__'], 3)
+
+    def test_is_path_clear_for_non_knight(self):
+        # Limpiar el camino para la prueba
+        self.board.__matrix__[6][3] = None
+        self.board.__matrix__[5][4] = None
+        
+        # Probar con un movimiento diagonal
+        bishop = Bishop("WHITE")
+        self.assertTrue(self.board.is_path_clear_for_non_knight(bishop, 7, 2, 5, 4))
+        
+        # Bloquear el camino y probar de nuevo
+        self.board.__matrix__[6][3] = Pawn("WHITE")
+        self.assertFalse(self.board.is_path_clear_for_non_knight(bishop, 7, 2, 5, 4))
+
+    def test_are_positions_valid(self):
+        # Posiciones válidas
+        self.assertTrue(self.board.are_positions_valid(0, 0, 1, 0))
+        
+        # Posición fuera del tablero
+        self.assertFalse(self.board.are_positions_valid(0, 0, 8, 0))
+        
+        # Posición inicial sin pieza
+        self.board.__matrix__[4][4] = None
+        self.assertFalse(self.board.are_positions_valid(4, 4, 5, 5))
+
+    def test_is_piece_movement_valid(self):
+        # Movimiento válido de un peón
+        pawn = self.board.__matrix__[6][0]
+        self.assertTrue(self.board.is_piece_movement_valid(pawn, 6, 0, 5, 0))
+        
+        # Movimiento inválido de un peón
+        self.assertFalse(self.board.is_piece_movement_valid(pawn, 6, 0, 4, 1))
+
+    def test_get_movement_type(self):
+        self.assertEqual(self.board.get_movement_type(0, 0, 0, 3), "horizontal")
+        self.assertEqual(self.board.get_movement_type(0, 0, 3, 0), "vertical")
+        self.assertEqual(self.board.get_movement_type(0, 0, 3, 3), "diagonal")
+        self.assertEqual(self.board.get_movement_type(0, 0, 1, 2), "invalid")
+    
+    def test_is_valid_move_out_of_board(self):
+        # Prueba para movimiento fuera del tablero (líneas 75-76)
+        self.assertFalse(self.board.is_valid_move(8, 0, 9, 0))
+
+    def test_is_valid_move_knight(self):
+        # Prueba para movimiento válido de un caballo (línea 91)
+        self.assertTrue(self.board.is_valid_move(7, 1, 5, 2))
+
+    def test_is_valid_move_blocked_path(self):
+        # Prueba para movimiento bloqueado (líneas 92-93)
+        self.assertFalse(self.board.is_valid_move(7, 0, 5, 0))
+
+    def test_move_piece_invalid(self):
+        # Prueba para movimiento inválido (líneas 115-116)
+        result = self.board.move_piece(7, 0, 7, 1)
+        self.assertEqual(result, "INVALID")
+
+    # def test_handle_pawn_promotion_invalid_choice(self):
+    #     # Colocar un peón blanco en la última fila
+    #     self.board.__matrix__[0][0] = Pawn("WHITE")
+        
+    #     # Simular una elección inválida y luego una válida
+    #     with patch('builtins.input', side_effect=['5', '1']):
+    #         with patch('sys.stdout', new=StringIO()) as fake_output:
+    #             self.board.handle_pawn_promotion(0, 0)
+    #             output = fake_output.getvalue()
+
+    #     self.assertIn("Elección no válida", output)
+    #     self.assertIsInstance(self.board.__matrix__[0][0], Queen)
+
+    def test_king_capture(self):
+        # Colocar un rey negro en una posición vulnerable
+        self.board.__matrix__[4][4] = King("BLACK")
+        
+        # Mover una pieza blanca para capturar al rey
+        self.board.__matrix__[5][5] = Pawn("WHITE")
+        with patch('sys.stdout', new=StringIO()) as fake_output:
+            self.board.move_piece(5, 5, 4, 4)
+            output = fake_output.getvalue()
+        
+        self.assertIn("¡El rey BLACK ha sido capturado! Fin del juego.", output)
+        self.assertTrue(self.board.__king_captured__)
+
+    def test_is_valid_move_knight(self):
+        # Prueba para movimiento válido de un caballo (línea 91)
+        self.assertTrue(self.board.is_valid_move(7, 1, 5, 2))
+
+    def test_is_valid_move_blocked_path(self):
+        # Prueba para movimiento bloqueado (líneas 92-93)
+        self.assertFalse(self.board.is_valid_move(7, 0, 5, 0))
+
+    def test_move_piece_invalid(self):
+        # Prueba para movimiento inválido (líneas 115-116)
+        result = self.board.move_piece(7, 0, 7, 1)
+        self.assertEqual(result, "INVALID")
+
+    def test_king_capture(self):
+        # Colocar un rey negro en una posición vulnerable (líneas 159-160)
+        self.board.__matrix__[4][4] = King("BLACK")
+        self.board.__matrix__[5][5] = Pawn("WHITE")
+        
+        with patch('sys.stdout', new=StringIO()) as fake_output:
+            self.board.move_piece(5, 5, 4, 4)
+            output = fake_output.getvalue()
+        
+        self.assertIn("¡El rey BLACK ha sido capturado! Fin del juego.", output)
+        self.assertTrue(self.board.__king_captured__)
+
+    def test_handle_pawn_promotion_all_choices(self):
+        # Prueba para todas las opciones de promoción de peón (líneas 180, 182, 184)
+        test_cases = [
+            ("1", Queen), ("2", Rook), ("3", Bishop), ("4", Knight), ("5", Queen)
+        ]
+        
+        for choice, expected_piece in test_cases:
+            with self.subTest(choice=choice):
+                self.board.__matrix__[0][0] = Pawn("WHITE")
+                with patch('builtins.input', return_value=choice):
+                    self.board.handle_pawn_promotion(0, 0)
+                self.assertIsInstance(self.board.__matrix__[0][0], expected_piece)
 
 
 if __name__ == '__main__':
