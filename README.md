@@ -5,11 +5,10 @@
 [![CircleCI](https://dl.circleci.com/status-badge/img/gh/um-computacion-tm/ajedrez-2024-AManatrizio/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/um-computacion-tm/ajedrez-2024-AManatrizio/tree/main)
 
 # Maintainability
-[![Maintainability](https://api.codeclimate.com/v1/badges/5399d708fab4616dfa19/maintainability)](https://codeclimate.com/github/um-computacion-tm/ajedrez-2024-AManatrizio/maintainability)
+[![Maintainability](https://api.codeclimate.com/v1/badges/ce00c9501c4aaa1da197/maintainability)](https://codeclimate.com/github/um-computacion-tm/ajedrez-2024-AManatrizio/maintainability)
 
 # Test Coverage
-[![Test Coverage](https://api.codeclimate.com/v1/badges/5399d708fab4616dfa19/test_coverage)](https://codeclimate.com/github/um-computacion-tm/ajedrez-2024-AManatrizio/test_coverage)
-
+[![Test Coverage](https://api.codeclimate.com/v1/badges/ce00c9501c4aaa1da197/test_coverage)](https://codeclimate.com/github/um-computacion-tm/ajedrez-2024-AManatrizio/test_coverage)
 
 
 # Chess Game - Python Project
