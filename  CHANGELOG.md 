@@ -1,1 +1,104 @@
-# CHANGELOG
+CHANGELOG
+
+
+
+---- October 05, 2024 ----
+- Added more tests to the Chess class to increase code coverage and test the newly added functions.
+I believe I have finally completed the project, with all features implemented and fully tested.
+
+---- October 04, 2024 ----
+- Worked on writing the README file, including all the necessary details about my
+chess game, how to play it, and how to run it in Docker.
+- Modified the Dockerfile.
+
+- Made changes to the pawn promotion function, removing leftover print statements and
+input calls from the Board class.
+
+
+---- October 02, 2024 ----
+- Added the function for pawn promotion when it reaches the end of the board.
+
+
+---- September 30, 2024 ----
+- Code Smell Fixes: Refined the is_valid_move function to address code smell issues.
+- Code Refactoring: The is_valid_move function was split into smaller functions to
+- improve clarity and maintainability:
+are_positions_valid: Verifies if the start and end positions are valid and within the board limits.
+is_piece_movement_valid: Checks if the piece's movement is valid according to its rules.
+is_destination_valid: Ensures the target cell doesn't contain a piece of the same color.
+get_movement_type: Determines if the movement is horizontal, vertical, or diagonal.
+- Improved Structure: The refactoring simplifies the code and enhances readability.
+
+
+---- September 29, 2024 ----
+- Bug Fixes and Improvements: Made several adjustments to resolve errors and enhance 
+the overall functionality.
+- Game Over Logic: I'm thinking about how to implement the is_over function, which will 
+determine how the game ends. I already have variables to track the captures of each piece
+and to determine if either king has been captured. I still need to write the code for this
+functionality.
+
+---- September 27, 2024 ----
+- Path Checking in Movement: Incorporated the is_path_clear method inside is_valid_move
+to prevent pieces, except the knight, from jumping over others.
+
+---- September 26, 2024 ----
+- Capture Functionality: Added the get_captures method to Chess for tracking captured pieces 
+and integrated it into the main class.
+
+---- September 24, 2024 ----
+- King and Pawn Improvements: Enhanced the logic for the movement of the King and Pawn classes.
+- Pieces: The specific movements that each piece can and cannot make are now clearly defined and working.
+I've been playing the game, and it works quite well overall. However, there are some issues,
+such as pieces jumping over others.
+
+---- September 23, 2024 ----
+- Refactoring: Cleaned up the Pawn class and restructured test_board for better readability 
+and performance.
+- Captures: Introduced a function to track the number of black and white pieces captured during
+the game.
+
+---- September 22, 2024 ----
+- Queen Logic Update: Made changes to the Queen's movement method and its corresponding tests.
+- Pawn Movement Validation: Added is_valid_movement to the Pawn class to ensure correct validation
+for forward and diagonal moves.
+Improved Structure: The refactoring simplifies the code and enhances readability.
+- Capture Logic: Currently considering how to define piece captures and keep track of the
+number of pieces captured for each color. This feature is still under development, and
+further thought is needed to determine the best implementation.
+
+---- September 20, 2024 ----
+- Bishop Movement Update: Adjusted the movement validation logic for the Bishop to correct errors.
+- Knight Movement: Modified the is_valid_movement method for the Knight and updated the tests accordingly.
+
+---- September 16, 2024 ----
+- Testing Enhancements: Refactored tests for the Board class and added tests for Chess and Bishop.
+Also cleaned up duplication issues in the tests.
+
+---- September 13, 2024 ----
+- Rook Movement: Finalized the is_valid_movement logic for the Rook and made related changes to
+the Chess and Main classes.
+
+---- September 11, 2024 ----
+King Movement Validation: Added is_valid_movement to the King class, incorporating the correct 
+movement rules for the King, and added unit tests.
+
+---- September 8, 2024 ----
+- Board and Chess Methods: Added the is_valid_move and move_piece methods to Board, and the 
+play_move and parse_move methods to Chess.
+
+---- September 7, 2024 ----
+- Path Clearing Functionality: Introduced the is_path_clear method in Board to ensure valid
+movement paths and added related tests.
+
+---- September 6, 2024 ----
+- Turn and Move Logic: Added switch_turn and play_move to Chess and resolved issues with the 
+Rook tests.
+
+---- September 3, 2024 ----
+- Rook Class Update: Updated the Rook class to use the Board instance for move validation 
+and path checking. Also updated the README.
+
+---- August 30, 2024 ----
+- Piece Representation: Improved the visual representation of the chess pieces and made
+changes to the changelog for better clarity.
