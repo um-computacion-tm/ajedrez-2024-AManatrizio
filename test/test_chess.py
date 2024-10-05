@@ -8,6 +8,11 @@ class TestChess(unittest.TestCase):
     def setUp(self):
         self.chess = Chess()
 
+    def setup_move_scenario(self, color, is_valid_move, move_result):
+        self.chess.__board__.get_color = MagicMock(return_value=color)
+        self.chess.__board__.is_valid_move = MagicMock(return_value=is_valid_move)
+        self.chess.__board__.move_piece = MagicMock(return_value=move_result)
+
     def test_init(self):
         self.assertIsInstance(self.chess.__board__, Board)
         self.assertEqual(self.chess.__current_player__, "WHITE")
@@ -56,37 +61,29 @@ class TestChess(unittest.TestCase):
         self.assertEqual(result, "INVALID_TURN")
 
     def test_play_move_valid(self):
-        self.chess.__board__.get_color = MagicMock(return_value="WHITE")
-        self.chess.__board__.is_valid_move = MagicMock(return_value=True)
-        self.chess.__board__.move_piece = MagicMock(return_value="NORMAL")
+        self.setup_move_scenario("WHITE", True, "NORMAL")
         result = self.chess.play_move("00", "01")
         self.assertEqual(result, "VALID")
         self.assertEqual(self.chess.__current_player__, "BLACK")
 
+
     def test_play_move_king_captured(self):
-        self.chess.__board__.get_color = MagicMock(return_value="WHITE")
-        self.chess.__board__.is_valid_move = MagicMock(return_value=True)
-        self.chess.__board__.move_piece = MagicMock(return_value=("KING_CAPTURED", "info"))
+        self.setup_move_scenario("WHITE", True, ("KING_CAPTURED", "info"))
         result = self.chess.play_move("00", "01")
         self.assertEqual(result, ("KING_CAPTURED", "info"))
 
     def test_play_move_promotion_needed(self):
-        self.chess.__board__.get_color = MagicMock(return_value="WHITE")
-        self.chess.__board__.is_valid_move = MagicMock(return_value=True)
-        self.chess.__board__.move_piece = MagicMock(return_value=("PROMOTION_NEEDED", "info"))
+        self.setup_move_scenario("WHITE", True, ("PROMOTION_NEEDED", "info"))
         result = self.chess.play_move("00", "01")
         self.assertEqual(result, ("PROMOTION_NEEDED", "info"))
 
     def test_play_move_invalid_capture(self):
-        self.chess.__board__.get_color = MagicMock(return_value="WHITE")
-        self.chess.__board__.is_valid_move = MagicMock(return_value=True)
-        self.chess.__board__.move_piece = MagicMock(return_value="INVALID_CAPTURE")
+        self.setup_move_scenario("WHITE", True, "INVALID_CAPTURE")
         result = self.chess.play_move("00", "01")
         self.assertEqual(result, "INVALID_CAPTURE")
 
     def test_play_move_invalid(self):
-        self.chess.__board__.get_color = MagicMock(return_value="WHITE")
-        self.chess.__board__.is_valid_move = MagicMock(return_value=False)
+        self.setup_move_scenario("WHITE", False, None)
         result = self.chess.play_move("00", "01")
         self.assertEqual(result, "INVALID")
 

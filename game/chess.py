@@ -38,31 +38,29 @@ class Chess:
     def play_move(self, piece, move):
         p_fila, p_columna = self.parse_move(piece)
         m_fila, m_columna = self.parse_move(move)
-        
         piece_color = self.__board__.get_color(p_fila, p_columna)
-        if piece_color != self.__current_player__:
-            return "INVALID_TURN"
+        
+        result = "INVALID"
+        info = None
 
-        if self.__board__.is_valid_move(p_fila, p_columna, m_fila, m_columna):
-            result = self.__board__.move_piece(p_fila, p_columna, m_fila, m_columna)
-            if isinstance(result, tuple):
-                result, info = result
+        if piece_color == self.__current_player__:
+            if self.__board__.is_valid_move(p_fila, p_columna, m_fila, m_columna):
+                move_result = self.__board__.move_piece(p_fila, p_columna, m_fila, m_columna)
+                
+                if isinstance(move_result, tuple):
+                    result, info = move_result
+                else:
+                    result = move_result
+
+                if result == "NORMAL":
+                    self.switch_turn()
+                    result = "VALID"
             else:
-                info = None
-            
-            if result == "NORMAL":
-                self.switch_turn()
-                return "VALID"
-            elif result == "KING_CAPTURED":
-                return "KING_CAPTURED", info
-            elif result == "PROMOTION_NEEDED":
-                return "PROMOTION_NEEDED", info
-            elif result == "INVALID_CAPTURE":
-                return "INVALID_CAPTURE"
-            else:
-                return "INVALID"
+                result = "INVALID"
         else:
-            return "INVALID"
+            result = "INVALID_TURN"
+
+        return (result, info) if info is not None else result
 
     def promote_pawn(self, fila, columna, choice):
         promoted_piece = self.__board__.handle_pawn_promotion(fila, columna, choice)
