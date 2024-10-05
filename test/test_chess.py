@@ -66,26 +66,25 @@ class TestChess(unittest.TestCase):
         self.assertEqual(result, "VALID")
         self.assertEqual(self.chess.__current_player__, "BLACK")
 
+    def check_play_move_scenario(self, expected_result, is_valid_move=True):
+        self.setup_move_scenario("WHITE", is_valid_move, expected_result)
+        result = self.chess.play_move("00", "01")
+        if expected_result:
+            self.assertEqual(result, expected_result)
+        else:
+            self.assertEqual(result, "INVALID")
 
     def test_play_move_king_captured(self):
-        self.setup_move_scenario("WHITE", True, ("KING_CAPTURED", "info"))
-        result = self.chess.play_move("00", "01")
-        self.assertEqual(result, ("KING_CAPTURED", "info"))
+        self.check_play_move_scenario(("KING_CAPTURED", "info"))
 
     def test_play_move_promotion_needed(self):
-        self.setup_move_scenario("WHITE", True, ("PROMOTION_NEEDED", "info"))
-        result = self.chess.play_move("00", "01")
-        self.assertEqual(result, ("PROMOTION_NEEDED", "info"))
+        self.check_play_move_scenario(("PROMOTION_NEEDED", "info"))
 
     def test_play_move_invalid_capture(self):
-        self.setup_move_scenario("WHITE", True, "INVALID_CAPTURE")
-        result = self.chess.play_move("00", "01")
-        self.assertEqual(result, "INVALID_CAPTURE")
+        self.check_play_move_scenario("INVALID_CAPTURE")
 
     def test_play_move_invalid(self):
-        self.setup_move_scenario("WHITE", False, None)
-        result = self.chess.play_move("00", "01")
-        self.assertEqual(result, "INVALID")
+        self.check_play_move_scenario(None, is_valid_move=False)
 
     def test_promote_pawn(self):
         self.chess.__board__.handle_pawn_promotion = MagicMock(return_value="QUEEN")
@@ -103,8 +102,6 @@ class TestChess(unittest.TestCase):
         self.assertEqual(self.chess.__current_player__, "BLACK")
         self.chess.switch_turn()
         self.assertEqual(self.chess.__current_player__, "WHITE")
-
-
 
 
 if __name__ == "__main__":
