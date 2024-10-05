@@ -128,7 +128,6 @@ class Board:
     
 
     def move_piece(self, p_fila, p_columna, m_fila, m_columna):
-        print(f"Iniciando movimiento de ({p_fila}, {p_columna}) a ({m_fila}, {m_columna})")
         pieza = self.__matrix__[p_fila][p_columna]
         
         # Verificar si hay una pieza en la casilla de destino
@@ -139,13 +138,12 @@ class Board:
             if color_destino != pieza.__color__:
                 if isinstance(pieza_capturada, King):
                     self.__king_captured__ = True
-                    print(f"¡El rey {color_destino} ha sido capturado! Fin del juego.")
+                    return "KING_CAPTURED", color_destino
                 
                 self.update_capture_count(color_destino)
                 self.__matrix__[m_fila][m_columna] = None
             else:
-                print("No se puede capturar una pieza del mismo color.")
-                return "INVALID"
+                return "INVALID_CAPTURE", None
 
         # Mover la pieza
         self.__matrix__[p_fila][p_columna] = None
@@ -156,23 +154,13 @@ class Board:
 
             # Verificar si el peón ha llegado al final del tablero
             if (pieza.__color__ == "WHITE" and m_fila == 0) or (pieza.__color__ == "BLACK" and m_fila == 7):
-                self.handle_pawn_promotion(m_fila, m_columna)
-                return "PROMOTED"
+                return "PROMOTION_NEEDED", (m_fila, m_columna)
 
-        return "NORMAL"
+        return "NORMAL", None
 
-    def handle_pawn_promotion(self, fila, columna):
-        print("El peón ha llegado al final del tablero. Elige una pieza para promocionar:")
-        print("1. Reina")
-        print("2. Torre")
-        print("3. Alfil")
-        print("4. Caballo")
-        
-        choice = input("Ingresa el número de tu elección: ")
-        
+    def handle_pawn_promotion(self, fila, columna, choice):
         pawn = self.__matrix__[fila][columna]
         color = pawn.__color__
-        new_piece = None
         
         if choice == "1":
             new_piece = Queen(color)
@@ -183,12 +171,10 @@ class Board:
         elif choice == "4":
             new_piece = Knight(color)
         else:
-            #print("Elección no válida. Se promocionará a Reina por defecto.")
             new_piece = Queen(color)
         
         self.__matrix__[fila][columna] = new_piece
-        #print(f"Peón promocionado a {type(new_piece).__name__}")
-    
+        return type(new_piece).__name__
 
     # Actualiza el contador de capturas basado en el color de la pieza capturada.
     def update_capture_count(self, color_destino):

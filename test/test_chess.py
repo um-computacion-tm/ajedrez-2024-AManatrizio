@@ -5,124 +5,109 @@ from game.board import Board
 
 class TestChess(unittest.TestCase):
 
-    def test_init(self):
-        chess = Chess()
-        self.assertIsInstance(chess.__board__, Board)
-        self.assertEqual(chess.__current_player__, "WHITE")
+    def setUp(self):
+        self.chess = Chess()
 
-    def test_switch_turn(self):
-        chess = Chess()
-        chess.switch_turn()
-        self.assertEqual(chess.__current_player__, "BLACK")
-        chess.switch_turn()
-        self.assertEqual(chess.__current_player__, "WHITE")
+    def test_init(self):
+        self.assertIsInstance(self.chess.__board__, Board)
+        self.assertEqual(self.chess.__current_player__, "WHITE")
+        self.assertFalse(self.chess.__mutual_agreement_to_end__)
+
+    def test_get_captures(self):
+        self.chess.__board__.get_capture_counts = MagicMock(return_value={"WHITE": 5, "BLACK": 3})
+        captures = self.chess.get_captures()
+        self.assertEqual(captures, {"WHITE": 5, "BLACK": 3})
+
+    def test_is_over(self):
+        # Test when game is not over
+        self.assertFalse(self.chess.is_over())
+
+        # Test when white captures 15 pieces
+        self.chess.__board__.__white_captures__ = 15
+        self.assertTrue(self.chess.is_over())
+
+        # Reset and test when black captures 15 pieces
+        self.chess.__board__.__white_captures__ = 0
+        self.chess.__board__.__black_captures__ = 15
+        self.assertTrue(self.chess.is_over())
+
+        # Test when king is captured
+        self.chess.__board__.__black_captures__ = 0
+        self.chess.__board__.__king_captured__ = True
+        self.assertTrue(self.chess.is_over())
+
+        # Test mutual agreement
+        self.chess.__board__.__king_captured__ = False
+        self.chess.__mutual_agreement_to_end__ = True
+        self.assertTrue(self.chess.is_over())
+
+    def test_end_game_by_agreement(self):
+        self.chess.end_game_by_agreement()
+        self.assertTrue(self.chess.__mutual_agreement_to_end__)
+
+    def test_display_board(self):
+        self.chess.__board__.display_board = MagicMock()
+        self.chess.display_board()
+        self.chess.__board__.display_board.assert_called_once()
+
+    def test_play_move_invalid_turn(self):
+        self.chess.__board__.get_color = MagicMock(return_value="BLACK")
+        result = self.chess.play_move("00", "01")
+        self.assertEqual(result, "INVALID_TURN")
+
+    def test_play_move_valid(self):
+        self.chess.__board__.get_color = MagicMock(return_value="WHITE")
+        self.chess.__board__.is_valid_move = MagicMock(return_value=True)
+        self.chess.__board__.move_piece = MagicMock(return_value="NORMAL")
+        result = self.chess.play_move("00", "01")
+        self.assertEqual(result, "VALID")
+        self.assertEqual(self.chess.__current_player__, "BLACK")
+
+    def test_play_move_king_captured(self):
+        self.chess.__board__.get_color = MagicMock(return_value="WHITE")
+        self.chess.__board__.is_valid_move = MagicMock(return_value=True)
+        self.chess.__board__.move_piece = MagicMock(return_value=("KING_CAPTURED", "info"))
+        result = self.chess.play_move("00", "01")
+        self.assertEqual(result, ("KING_CAPTURED", "info"))
+
+    def test_play_move_promotion_needed(self):
+        self.chess.__board__.get_color = MagicMock(return_value="WHITE")
+        self.chess.__board__.is_valid_move = MagicMock(return_value=True)
+        self.chess.__board__.move_piece = MagicMock(return_value=("PROMOTION_NEEDED", "info"))
+        result = self.chess.play_move("00", "01")
+        self.assertEqual(result, ("PROMOTION_NEEDED", "info"))
+
+    def test_play_move_invalid_capture(self):
+        self.chess.__board__.get_color = MagicMock(return_value="WHITE")
+        self.chess.__board__.is_valid_move = MagicMock(return_value=True)
+        self.chess.__board__.move_piece = MagicMock(return_value="INVALID_CAPTURE")
+        result = self.chess.play_move("00", "01")
+        self.assertEqual(result, "INVALID_CAPTURE")
+
+    def test_play_move_invalid(self):
+        self.chess.__board__.get_color = MagicMock(return_value="WHITE")
+        self.chess.__board__.is_valid_move = MagicMock(return_value=False)
+        result = self.chess.play_move("00", "01")
+        self.assertEqual(result, "INVALID")
+
+    def test_promote_pawn(self):
+        self.chess.__board__.handle_pawn_promotion = MagicMock(return_value="QUEEN")
+        result = self.chess.promote_pawn(0, 0, "QUEEN")
+        self.assertEqual(result, "QUEEN")
+        self.assertEqual(self.chess.__current_player__, "BLACK")
 
     def test_parse_move(self):
-        chess = Chess()
-        move = "12"
-        fila, columna = chess.parse_move(move)
+        fila, columna = self.chess.parse_move("12")
         self.assertEqual(fila, 1)
         self.assertEqual(columna, 2)
 
-    def test_play_invalid_move(self):
-        chess = Chess()
-        chess.__board__.is_valid_move = MagicMock(return_value=False)
+    def test_switch_turn(self):
+        self.chess.switch_turn()
+        self.assertEqual(self.chess.__current_player__, "BLACK")
+        self.chess.switch_turn()
+        self.assertEqual(self.chess.__current_player__, "WHITE")
 
-        result = chess.play_move("12", "34")
-        self.assertFalse(result)
-        self.assertEqual(chess.__current_player__, "WHITE")
 
-    def test_get_captures(self):
-        chess = Chess()
-        # Simulamos que get_capture_counts retorna un diccionario
-        chess.__board__.get_capture_counts = MagicMock(return_value={"__white_captures__": 2, "__black_captures__": 3})
-        
-        captures = chess.get_captures()
-        self.assertEqual(captures, {"__white_captures__": 2, "__black_captures__": 3})
-
-    def test_play_move_wrong_turn(self):
-        chess = Chess()
-        # Intentar mover una pieza negra en el turno de las blancas
-        result = chess.play_move("10", "30")
-        self.assertFalse(result)
-        self.assertEqual(chess.__current_player__, "WHITE")
-
-    def test_play_move_empty_square(self):
-        chess = Chess()
-        # Intentar mover desde una casilla vacía
-        result = chess.play_move("40", "50")
-        self.assertFalse(result)
-
-    def test_play_move_capture(self):
-        chess = Chess()
-        # Simular una captura
-        chess.__board__.is_valid_move = MagicMock(return_value=True)
-        chess.__board__.has_piece = MagicMock(return_value=True)
-        chess.__board__.get_color = MagicMock(side_effect=["WHITE", "BLACK"])
-        chess.__board__.move_piece = MagicMock()
-        #chess.__board__.update_capture_count = MagicMock()
-
-        # result = chess.play_move("60", "51")
-        # self.assertTrue(result)
-        # chess.__board__.update_capture_count.assert_called_once_with("BLACK")
-
-    def test_display___board__(self):
-        chess = Chess()
-        # Mock para verificar que se llame al método display___board__ del __board__
-        chess.__board__.display_board= MagicMock()
-        
-        chess.__board__.display_board()
-        chess.__board__.display_board.assert_called_once()
-
-class TestChessAdditional(unittest.TestCase):
-
-    def test_is_over_by_captures(self):
-        chess = Chess()
-        
-        # Caso: No terminado
-        chess.__board__.__white_captures__ = 14
-        chess.__board__.__black_captures__ = 14
-        self.assertFalse(chess.is_over())
-        
-        # Caso: Terminado por capturas blancas
-        chess.__board__.__white_captures__ = 15
-        self.assertTrue(chess.is_over())
-        
-        # Caso: Terminado por capturas negras
-        chess.__board__.__white_captures__ = 14
-        chess.__board__.__black_captures__ = 15
-        self.assertTrue(chess.is_over())
-
-    def test_is_over_by_king_capture(self):
-        chess = Chess()
-        
-        # Caso: Rey no capturado
-        chess.__board__.__king_captured__ = False
-        self.assertFalse(chess.is_over())
-        
-        # Caso: Rey capturado
-        chess.__board__.__king_captured__ = True
-        self.assertTrue(chess.is_over())
-
-    @patch('builtins.print')
-    def test_play_move_detailed(self, mock_print):
-        chess = Chess()
-        chess.__board__.is_valid_move = MagicMock(return_value=True)
-        chess.__board__.has_piece = MagicMock(return_value=False)
-        chess.__board__.get_color = MagicMock(return_value="WHITE")
-        chess.__board__.move_piece = MagicMock()
-
-        result = chess.play_move("60", "40")
-        
-
-    def test_play_move_capture_own_piece(self):
-        chess = Chess()
-        chess.__board__.has_piece = MagicMock(return_value=True)
-        chess.__board__.get_color = MagicMock(return_value="WHITE")
-
-        result = chess.play_move("60", "70")
-        
-        self.assertFalse(result)
 
 
 if __name__ == "__main__":

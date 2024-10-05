@@ -36,37 +36,38 @@ class Chess:
 
 
     def play_move(self, piece, move):
-        #print(f"Intentando mover pieza {piece} a {move}")
         p_fila, p_columna = self.parse_move(piece)
         m_fila, m_columna = self.parse_move(move)
         
-        # Verificar si es el turno del jugador correcto
         piece_color = self.__board__.get_color(p_fila, p_columna)
         if piece_color != self.__current_player__:
-            #print(f"No es el turno de las piezas {piece_color}")
-            return False
+            return "INVALID_TURN"
 
-        # Verificar si el destino tiene una pieza del oponente para capturar
-        if self.__board__.has_piece(m_fila, m_columna):
-            target_color = self.__board__.get_color(m_fila, m_columna)
-            if target_color != self.__current_player__:
-                #print(f"Capturando pieza de {target_color}")
-                pass
-            else:
-                #print("No puedes capturar tu propia pieza")
-                return False
-
-        # Verificar si el movimiento es válido
         if self.__board__.is_valid_move(p_fila, p_columna, m_fila, m_columna):
-            #print("Movimiento válido")
-            self.__board__.move_piece(p_fila, p_columna, m_fila, m_columna)
-            #print(f"Posiciones convertidas: inicial ({p_fila}, {p_columna}), final ({m_fila}, {m_columna})")
-            self.switch_turn()
-            #print(f"Turno de: {self.__current_player__}")
-            return True
+            result = self.__board__.move_piece(p_fila, p_columna, m_fila, m_columna)
+            if isinstance(result, tuple):
+                result, info = result
+            else:
+                info = None
+            
+            if result == "NORMAL":
+                self.switch_turn()
+                return "VALID"
+            elif result == "KING_CAPTURED":
+                return "KING_CAPTURED", info
+            elif result == "PROMOTION_NEEDED":
+                return "PROMOTION_NEEDED", info
+            elif result == "INVALID_CAPTURE":
+                return "INVALID_CAPTURE"
+            else:
+                return "INVALID"
         else:
-            #print("Movimiento no válido")
-            return False
+            return "INVALID"
+
+    def promote_pawn(self, fila, columna, choice):
+        promoted_piece = self.__board__.handle_pawn_promotion(fila, columna, choice)
+        self.switch_turn()
+        return promoted_piece
 
 
 

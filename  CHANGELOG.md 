@@ -1,5 +1,24 @@
 CHANGELOG
 
+
+
+---- October 05, 2024 ----
+- Added more tests to the Chess class to increase code coverage and test the newly added functions.
+I believe I have finally completed the project, with all features implemented and fully tested.
+
+---- October 04, 2024 ----
+- Worked on writing the README file, including all the necessary details about my
+chess game, how to play it, and how to run it in Docker.
+- Modified the Dockerfile.
+
+- Made changes to the pawn promotion function, removing leftover print statements and
+input calls from the Board class.
+
+
+---- October 02, 2024 ----
+- Added the function for pawn promotion when it reaches the end of the board.
+
+
 ---- September 30, 2024 ----
 - Code Smell Fixes: Refined the is_valid_move function to address code smell issues.
 - Code Refactoring: The is_valid_move function was split into smaller functions to
