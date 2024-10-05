@@ -62,10 +62,11 @@ def display_game_result(chess):
     print("The game has ended!")
     if chess.__mutual_agreement_to_end__:
         print("The game ended by mutual agreement.")
-    elif chess.board.__king_captured__:
+    elif chess.__board__.__king_captured__:
         print("The king has been captured.")
     else:
-        winner = "WHITE" if chess.board.__black_captures__ == 15 else "BLACK"
+        captures = chess.get_captures()
+        winner = "WHITE" if captures['__white_captures__'] == 15 else "BLACK"
         print(f"{winner} has won by capturing all opponent's pieces.")
 
 def main():
