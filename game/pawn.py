@@ -16,8 +16,9 @@ class Pawn(Piece):
 
     def is_valid_movement(self, initial_row, initial_col, final_row, final_col, is_capture=False):
         # Determinar la dirección del movimiento según el __color__
-        direction = 1 if self.__color__.lower() == "black" else -1
         
+        direction = 1 if self.__color__.lower() == "black" else -1
+        flag = False
         # Calcular la diferencia en filas y columnas
         row_diff = final_row - initial_row
         col_diff = abs(final_col - initial_col)
@@ -36,11 +37,13 @@ class Pawn(Piece):
         # Movimiento diagonal (potencial captura)
         elif col_diff == 1 and row_diff == direction:
             if is_capture:
-                return True
+                flag = True
+                
             else:
-                return False
+                flag = False
+                
         
-        return False
+        return flag
 
      # Cambia el estado de que ya no es el primer movimiento del peon
     def complete_move(self):
