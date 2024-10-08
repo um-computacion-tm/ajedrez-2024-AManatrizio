@@ -53,7 +53,7 @@ class Board:
             return True
         return False
 
-
+    # Obtiene el color de una pieza en la posicion
     def get_color(self, row, col):
         piece = self.__matrix__[row][col]
         if piece is None:
@@ -65,17 +65,37 @@ class Board:
     # Verifica si un movimiento es válido en el tablero de ajedrez.
     # Combina todas las reglas de movimiento en una sola función.
     def is_valid_move(self, p_fila, p_columna, m_fila, m_columna):
-        is_valid = False
         try:
-            if self.are_positions_valid(p_fila, p_columna, m_fila, m_columna):
-                pieza = self.__matrix__[p_fila][p_columna]
-                if self.is_piece_movement_valid(pieza, p_fila, p_columna, m_fila, m_columna):
-                    if isinstance(pieza, Knight) or self.is_path_clear_for_non_knight(pieza, p_fila, p_columna, m_fila, m_columna):
-                        is_valid = self.is_destination_valid(pieza, m_fila, m_columna)
-        except OutOfBoardError:
-            is_valid = False
+            if not self.are_positions_valid(p_fila, p_columna, m_fila, m_columna):
+                return False
+            
+            pieza = self.__matrix__[p_fila][p_columna]
+            is_capture = self.has_piece(m_fila, m_columna) and self.get_color(m_fila, m_columna) != pieza.__color__
+            
+            if isinstance(pieza, Pawn):
+                is_valid = pieza.is_valid_movement(p_fila, p_columna, m_fila, m_columna, is_capture)
+                # Verificar movimiento diagonal del peón solo si es captura
+                if abs(m_columna - p_columna) == 1:
+                    if not is_capture:
+                        return False
+            else:
+                is_valid = pieza.is_valid_movement(p_fila, p_columna, m_fila, m_columna)
+            
+            if not is_valid:
+                return False
+
+            if isinstance(pieza, Knight):
+                return self.is_destination_valid(pieza, m_fila, m_columna)
+            else:
+                movement_type = self.get_movement_type(p_fila, p_columna, m_fila, m_columna)
+                if movement_type == "invalid":
+                    return False
+                if not self.is_path_clear(p_fila, p_columna, m_fila, m_columna, movement_type):
+                    return False
+                return self.is_destination_valid(pieza, m_fila, m_columna)
         
-        return is_valid
+        except OutOfBoardError:
+            return False
 
 
     # Verifica si el camino está libre para piezas que no son caballos.
@@ -196,7 +216,6 @@ class Board:
     # Verifica que tipo de movimiento es luego lo pasa a otra funcion
     # que determina si no hay nada en el camino
     def is_path_clear(self, initial_row, initial_col, final_row, final_col, movement_type):
-        #print(f"Checking path from ({initial_row}, {initial_col}) to ({final_row}, {final_col}) - {movement_type}")
         if movement_type == "horizontal":
             return self.is_horizontal_path_clear(initial_row, initial_col, final_col)
         elif movement_type == "vertical":

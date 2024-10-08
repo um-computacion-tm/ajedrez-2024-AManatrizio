@@ -31,8 +31,9 @@ class TestPawn(unittest.TestCase):
         self.assertFalse(pawn.is_valid_movement(start_row, 0, two_step + 1, 0))  # Tres pasos adelante (inválido)
 
         # Movimiento diagonal (captura)
-        self.assertTrue(pawn.is_valid_movement(start_row, 0, one_step, 1))  # Captura a la derecha
-        self.assertTrue(pawn.is_valid_movement(start_row, 1, one_step, 0))  # Captura a la izquierda
+        self.assertTrue(pawn.is_valid_movement(start_row, 0, one_step, 1, is_capture=True))  # Captura a la derecha
+        self.assertTrue(pawn.is_valid_movement(start_row, 1, one_step, 0, is_capture=True))  # Captura a la izquierda
+        self.assertFalse(pawn.is_valid_movement(start_row, 0, one_step, 1, is_capture=False))  # Diagonal sin captura (inválido)
 
         # Movimientos inválidos
         self.assertFalse(pawn.is_valid_movement(start_row, 0, start_row, 1))  # Movimiento lateral

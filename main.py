@@ -30,7 +30,8 @@ def handle_move(chess):
     elif result == "INVALID":
         print("Invalid move! Try again.")
     elif result == "KING_CAPTURED":
-        print(f"The {info} king has been captured! Game over.")
+        winning_color = "White" if info == "BLACK" else "Black"
+        print(f"The {winning_color} player has captured the king! Game over.")
     elif result == "PROMOTION_NEEDED":
         fila, columna = info
         print("Pawn promotion! Choose a piece to promote to:")
