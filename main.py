@@ -87,7 +87,7 @@ def handle_end_game_agreement(chess):
 def display_game_result(chess):
     print("The game has ended!")
     if chess.__mutual_agreement_to_end__:
-        print("The game ended by mutual agreement.")
+        print("...")
     elif chess.__board__.__king_captured__:
         print("The king has been captured.")
     else:

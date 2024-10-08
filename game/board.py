@@ -55,28 +55,30 @@ class Board:
     def is_valid_move(self, p_fila, p_columna, m_fila, m_columna):
         if not self.are_positions_valid(p_fila, p_columna, m_fila, m_columna):
             return False
-
+        
         pieza = self.__matrix__[p_fila][p_columna]
         is_capture = self.has_piece(m_fila, m_columna) and self.get_color(m_fila, m_columna) != pieza.__color__
-
-        if not self.is_valid_piece_movement(pieza, p_fila, p_columna, m_fila, m_columna, is_capture):
+        
+        move_info = (pieza, p_fila, p_columna, m_fila, m_columna, is_capture)
+        if not self.is_valid_piece_movement(move_info):
             return False
-
+        
         if isinstance(pieza, Knight):
             return self.is_destination_valid(pieza, m_fila, m_columna)
-
+        
         movement_type = self.get_movement_type(p_fila, p_columna, m_fila, m_columna)
         if movement_type == "invalid" or not self.is_path_clear(p_fila, p_columna, m_fila, m_columna, movement_type):
             return False
-
+        
         return self.is_destination_valid(pieza, m_fila, m_columna)
 
-    def is_valid_piece_movement(self, pieza, p_fila, p_columna, m_fila, m_columna, is_capture):
+    def is_valid_piece_movement(self, move_info):
+        pieza, p_fila, p_columna, m_fila, m_columna, is_capture = move_info
         if isinstance(pieza, Pawn):
             is_valid = pieza.is_valid_movement(p_fila, p_columna, m_fila, m_columna, is_capture)
             return is_valid and not (abs(m_columna - p_columna) == 1 and not is_capture)
         return pieza.is_valid_movement(p_fila, p_columna, m_fila, m_columna)
-
+    
     def is_path_clear_for_non_knight(self, pieza, p_fila, p_columna, m_fila, m_columna):
         movement_type = self.get_movement_type(p_fila, p_columna, m_fila, m_columna)
         return self.is_path_clear(p_fila, p_columna, m_fila, m_columna, movement_type)
