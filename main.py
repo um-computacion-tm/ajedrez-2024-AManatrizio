@@ -47,6 +47,7 @@ def process_move_result(result, info, chess):
     elif result == "PROMOTION_NEEDED":
         handle_pawn_promotion(info, chess)
         display_game_status(chess)
+        return True
     elif result == "VALID":
         print("Move successful!")
         return True
@@ -56,7 +57,8 @@ def process_move_result(result, info, chess):
 
 def handle_king_capture(captured_color):
     winning_color = "White" if captured_color == "BLACK" else "Black"
-    print(f"The {winning_color} player has captured the king! Game over.")
+    print(f"The {winning_color} player has captured the king!")
+    print(f"{winning_color} wins!")
 
 def handle_pawn_promotion(info, chess):
     fila, columna = info

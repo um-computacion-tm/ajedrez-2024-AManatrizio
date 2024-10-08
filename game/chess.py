@@ -53,8 +53,14 @@ class Chess:
                     result = move_result
 
                 if result == "NORMAL":
-                    self.switch_turn()
                     result = "VALID"
+                elif result == "PROMOTION_NEEDED":
+                    return "PROMOTION_NEEDED", info
+                elif result == "KING_CAPTURED":
+                    return "KING_CAPTURED", info
+                
+                if result != "INVALID" and result != "INVALID_CAPTURE":
+                    self.switch_turn()
             else:
                 result = "INVALID"
         else:
@@ -64,7 +70,7 @@ class Chess:
 
     def promote_pawn(self, fila, columna, choice):
         promoted_piece = self.__board__.handle_pawn_promotion(fila, columna, choice)
-        self.switch_turn()
+        self.switch_turn() 
         return promoted_piece
 
 
