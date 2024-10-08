@@ -65,33 +65,35 @@ class Board:
     # Verifica si un movimiento es válido en el tablero de ajedrez.
     # Combina todas las reglas de movimiento en una sola función.
     def is_valid_move(self, p_fila, p_columna, m_fila, m_columna):
+        is_valid = True
+
         if not self.are_positions_valid(p_fila, p_columna, m_fila, m_columna):
-            return False
-        
-        pieza = self.__matrix__[p_fila][p_columna]
-        is_capture = self.has_piece(m_fila, m_columna) and self.get_color(m_fila, m_columna) != pieza.__color__
-        
-        # Validación del movimiento de la pieza
-        if isinstance(pieza, Pawn):
-            is_valid = pieza.is_valid_movement(p_fila, p_columna, m_fila, m_columna, is_capture)
-            if abs(m_columna - p_columna) == 1 and not is_capture:
-                return False
+            is_valid = False
         else:
-            is_valid = pieza.is_valid_movement(p_fila, p_columna, m_fila, m_columna)
-        
-        if not is_valid:
-            return False
+            pieza = self.__matrix__[p_fila][p_columna]
+            is_capture = self.has_piece(m_fila, m_columna) and self.get_color(m_fila, m_columna) != pieza.__color__
 
-        # Validación específica para el Caballo
-        if isinstance(pieza, Knight):
-            return self.is_destination_valid(pieza, m_fila, m_columna)
+            # Validación del movimiento de la pieza
+            if isinstance(pieza, Pawn):
+                is_valid = pieza.is_valid_movement(p_fila, p_columna, m_fila, m_columna, is_capture)
+                if abs(m_columna - p_columna) == 1 and not is_capture:
+                    is_valid = False
+            else:
+                is_valid = pieza.is_valid_movement(p_fila, p_columna, m_fila, m_columna)
 
-        # Validación del tipo de movimiento y camino
-        movement_type = self.get_movement_type(p_fila, p_columna, m_fila, m_columna)
-        if movement_type == "invalid" or not self.is_path_clear(p_fila, p_columna, m_fila, m_columna, movement_type):
-            return False
+            if is_valid:
+                # Validación específica para el Caballo
+                if isinstance(pieza, Knight):
+                    is_valid = self.is_destination_valid(pieza, m_fila, m_columna)
+                else:
+                    # Validación del tipo de movimiento y camino
+                    movement_type = self.get_movement_type(p_fila, p_columna, m_fila, m_columna)
+                    if movement_type == "invalid" or not self.is_path_clear(p_fila, p_columna, m_fila, m_columna, movement_type):
+                        is_valid = False
+                    else:
+                        is_valid = self.is_destination_valid(pieza, m_fila, m_columna)
 
-        return self.is_destination_valid(pieza, m_fila, m_columna)
+        return is_valid
 
 
     # Verifica si el camino está libre para piezas que no son caballos.
