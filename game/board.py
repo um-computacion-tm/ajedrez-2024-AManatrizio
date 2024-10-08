@@ -53,24 +53,27 @@ class Board:
         return piece.__color__ if piece else None
 
     def is_valid_move(self, p_fila, p_columna, m_fila, m_columna):
+        is_valid = True
+        
         if not self.are_positions_valid(p_fila, p_columna, m_fila, m_columna):
-            return False
+            is_valid = False
+        else:
+            pieza = self.__matrix__[p_fila][p_columna]
+            is_capture = self.has_piece(m_fila, m_columna) and self.get_color(m_fila, m_columna) != pieza.__color__
+            move_info = (pieza, p_fila, p_columna, m_fila, m_columna, is_capture)
+            
+            if not self.is_valid_piece_movement(move_info):
+                is_valid = False
+            elif isinstance(pieza, Knight):
+                is_valid = self.is_destination_valid(pieza, m_fila, m_columna)
+            else:
+                movement_type = self.get_movement_type(p_fila, p_columna, m_fila, m_columna)
+                if movement_type == "invalid" or not self.is_path_clear(p_fila, p_columna, m_fila, m_columna, movement_type):
+                    is_valid = False
+                else:
+                    is_valid = self.is_destination_valid(pieza, m_fila, m_columna)
         
-        pieza = self.__matrix__[p_fila][p_columna]
-        is_capture = self.has_piece(m_fila, m_columna) and self.get_color(m_fila, m_columna) != pieza.__color__
-        
-        move_info = (pieza, p_fila, p_columna, m_fila, m_columna, is_capture)
-        if not self.is_valid_piece_movement(move_info):
-            return False
-        
-        if isinstance(pieza, Knight):
-            return self.is_destination_valid(pieza, m_fila, m_columna)
-        
-        movement_type = self.get_movement_type(p_fila, p_columna, m_fila, m_columna)
-        if movement_type == "invalid" or not self.is_path_clear(p_fila, p_columna, m_fila, m_columna, movement_type):
-            return False
-        
-        return self.is_destination_valid(pieza, m_fila, m_columna)
+        return is_valid
 
     def is_valid_piece_movement(self, move_info):
         pieza, p_fila, p_columna, m_fila, m_columna, is_capture = move_info
