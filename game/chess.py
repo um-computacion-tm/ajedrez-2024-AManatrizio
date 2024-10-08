@@ -70,11 +70,19 @@ class Chess:
 
 
     def parse_move(self, move):
-        # Checkeo de que las posiciones son validas
-        # Convertir el movimiento en coordenadas
-        fila = int(move[0])
-        columna = int(move[1])
-        return fila, columna
+        if len(move) != 2:
+            raise ValueError("Invalid input. Please enter two digits together (e.g., '62' for row 6, column 2).")
+        
+        try:
+            row = int(move[0])
+            col = int(move[1])
+            
+            if 0 <= row <= 7 and 0 <= col <= 7:
+                return row, col
+            else:
+                raise ValueError("Coordinates must be between 0 and 7.")
+        except ValueError:
+            raise ValueError("Please enter only numbers for coordinates.")
 
 
     # Cambio de turno

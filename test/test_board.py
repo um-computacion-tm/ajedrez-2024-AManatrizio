@@ -125,7 +125,6 @@ class TestBoardMovement(unittest.TestCase):
         pawn = self.board.__matrix__[6][0]
         self.board.move_piece(6, 0, 4, 0)
         self.assertFalse(pawn.__first_move__)
-    
 
 class TestBoardCaptures(unittest.TestCase):
     def setUp(self):
@@ -138,18 +137,16 @@ class TestBoardCaptures(unittest.TestCase):
         self.assertEqual(capture_counts["__white_captures__"], 2)
         self.assertEqual(capture_counts["__black_captures__"], 3)
 
-    def test_get_capture_counts(self):
-        self.board.__white_captures__ = 2
-        self.board.__black_captures__ = 3
-        capture_counts = self.board.get_capture_counts()
-        self.assertEqual(capture_counts["__white_captures__"], 2)
-        self.assertEqual(capture_counts["__black_captures__"], 3)
+    def test_update_capture_count(self):
+        initial_white_captures = self.board.__white_captures__
+        initial_black_captures = self.board.__black_captures__
+        
+        self.board.update_capture_count("WHITE")
+        self.assertEqual(self.board.__black_captures__, initial_black_captures + 1)
+        
+        self.board.update_capture_count("BLACK")
+        self.assertEqual(self.board.__white_captures__, initial_white_captures + 1)
 
-    def test_print_capture_counts(self):
-        self.board.__white_captures__ = 2
-        self.board.__black_captures__ = 3
-
-    
 class TestBoardAdditional(unittest.TestCase):
     def setUp(self):
         self.board = Board()
@@ -167,7 +164,6 @@ class TestBoardAdditional(unittest.TestCase):
         # Prueba para un movimiento válido de un caballo
         self.assertTrue(self.board.is_valid_move(7, 1, 5, 2))
         
-        
         # Prueba para un movimiento diagonal inválido del peón (sin captura)
         self.assertFalse(self.board.is_valid_move(6, 0, 5, 1))
         
@@ -182,7 +178,6 @@ class TestBoardAdditional(unittest.TestCase):
         self.assertIsInstance(self.board.__matrix__[4][0], Pawn)
         self.assertIsNone(self.board.__matrix__[6][0])
 
-
         # Capturar una pieza
         self.board.__matrix__[3][0] = Pawn("BLACK")
         self.board.move_piece(4, 0, 3, 0)
@@ -190,25 +185,6 @@ class TestBoardAdditional(unittest.TestCase):
         self.assertEqual(self.board.__matrix__[3][0].__color__, "WHITE")
         
 
-    def test_is_path_clear(self):
-        # Camino horizontal bloqueado
-        self.board.__matrix__[0][2] = None  # Eliminar el alfil negro
-        self.assertFalse(self.board.is_path_clear(0, 0, 0, 3, "horizontal"))
-
-        
-        # Camino diagonal bloqueado
-        self.board.__matrix__[5][1] = Pawn("WHITE")
-        self.assertFalse(self.board.is_path_clear(6, 0, 4, 2, "diagonal"))
-        
-        # Camino diagonal libre
-        self.board.__matrix__[5][1] = None
-        self.assertTrue(self.board.is_path_clear(6, 0, 4, 2, "diagonal"))
-
-    def test_get_movement_type(self):
-        self.assertEqual(self.board.get_movement_type(0, 0, 0, 3), "horizontal")
-        self.assertEqual(self.board.get_movement_type(0, 0, 3, 0), "vertical")
-        self.assertEqual(self.board.get_movement_type(0, 0, 3, 3), "diagonal")
-        self.assertEqual(self.board.get_movement_type(0, 0, 1, 2), "invalid")
     
 class TestBoardAdditionalCoverage(unittest.TestCase):
     def setUp(self):
@@ -223,26 +199,6 @@ class TestBoardAdditionalCoverage(unittest.TestCase):
         self.board.move_piece(5, 5, 4, 4)
         
         self.assertTrue(self.board.__king_captured__)
-
-
-    def test_get_capture_counts(self):
-        self.board.__white_captures__ = 2
-        self.board.__black_captures__ = 3
-        
-        capture_counts = self.board.get_capture_counts()
-        
-        self.assertEqual(capture_counts['__white_captures__'], 2)
-        self.assertEqual(capture_counts['__black_captures__'], 3)
-
-    def test_update_capture_count(self):
-        initial_white_captures = self.board.__white_captures__
-        initial_black_captures = self.board.__black_captures__
-        
-        self.board.update_capture_count("WHITE")
-        self.assertEqual(self.board.__black_captures__, initial_black_captures + 1)
-        
-        self.board.update_capture_count("BLACK")
-        self.assertEqual(self.board.__white_captures__, initial_white_captures + 1)
 
     def test_get_capture_counts(self):
         self.board.__white_captures__ = 2
@@ -291,14 +247,6 @@ class TestBoardAdditionalCoverage(unittest.TestCase):
         self.assertEqual(self.board.get_movement_type(0, 0, 3, 3), "diagonal")
         self.assertEqual(self.board.get_movement_type(0, 0, 1, 2), "invalid")
     
-    def test_is_valid_move_out_of_board(self):
-        # Prueba para movimiento fuera del tablero 
-        self.assertFalse(self.board.is_valid_move(8, 0, 9, 0))
-
-    def test_is_valid_move_knight(self):
-        # Prueba para movimiento valido de un caballo 
-        self.assertTrue(self.board.is_valid_move(7, 1, 5, 2))
-
 
     def test_is_valid_move_knight(self):
         # Prueba para movimiento valido de un caballo 
@@ -356,24 +304,6 @@ class TestBoardAdditionalCoverage(unittest.TestCase):
         # Movimiento invalido para un caballo 
         self.assertFalse(self.board.is_valid_move(7, 1, 5, 1))
 
-    def test_pawn_diagonal_movement(self):
-        # Movimiento diagonal del peon sin captura 
-        self.assertFalse(self.board.is_valid_move(6, 0, 5, 1))
-
-        # Movimiento diagonal del peon con captura
-        self.board.__matrix__[5][1] = Pawn("BLACK")
-        self.assertTrue(self.board.is_valid_move(6, 0, 5, 1))
-
-    def test_update_capture_count(self):
-        initial_white_captures = self.board.__white_captures__
-        initial_black_captures = self.board.__black_captures__
-        
-        self.board.update_capture_count("WHITE")
-        self.assertEqual(self.board.__black_captures__, initial_black_captures + 1)
-        
-        self.board.update_capture_count("BLACK")
-        self.assertEqual(self.board.__white_captures__, initial_white_captures + 1)
-    
     def test_pawn_diagonal_movement(self):
         # Movimiento diagonal del peon sin captura no deberia ser valido
         self.assertFalse(self.board.is_valid_move(6, 0, 5, 1))

@@ -13,37 +13,51 @@ def display_game_status(chess):
     print(f"\nTurn of: {chess.__current_player__}")
 
 def handle_move(chess):
-    print("To move a piece, type the row number followed by \nthe column number without any spaces. For example: 62")
-    piece = input("Enter your piece to move: ")
-    move = input("Enter where to move: ")
-    result = chess.play_move(piece, move)
-    
-    if isinstance(result, tuple):
-        result, info = result
-    else:
-        info = None
+    while True:
+        try:
+            print("To move a piece, type the row number followed by \nthe column number without any spaces. For example: 62")
+            piece = input("Enter your piece to move: ")
+            move = input("Enter where to move: ")
+            result = chess.play_move(piece, move)
+            
+            if isinstance(result, tuple):
+                result, info = result
+            else:
+                info = None
 
-    if result == "INVALID_TURN":
-        print("It's not your turn!")
-    elif result == "INVALID_CAPTURE":
-        print("You can't capture your own piece!")
-    elif result == "INVALID":
-        print("Invalid move! Try again.")
-    elif result == "KING_CAPTURED":
-        winning_color = "White" if info == "BLACK" else "Black"
-        print(f"The {winning_color} player has captured the king! Game over.")
-    elif result == "PROMOTION_NEEDED":
-        fila, columna = info
-        print("Pawn promotion! Choose a piece to promote to:")
-        print("1. Queen")
-        print("2. Rook")
-        print("3. Bishop")
-        print("4. Knight")
-        choice = input("Enter your choice (1-4): ")
-        promoted_piece = chess.promote_pawn(fila, columna, choice)
-        print(f"Pawn promoted to {promoted_piece}")
-    elif result == "VALID":
-        print("Move successful!")
+            if result == "INVALID_TURN":
+                print("It's not your turn!")
+            elif result == "INVALID_CAPTURE":
+                print("You can't capture your own piece!")
+            elif result == "INVALID":
+                print("Invalid move! Try again.")
+            elif result == "KING_CAPTURED":
+                winning_color = "White" if info == "BLACK" else "Black"
+                print(f"The {winning_color} player has captured the king! Game over.")
+                return
+            elif result == "PROMOTION_NEEDED":
+                fila, columna = info
+                print("Pawn promotion! Choose a piece to promote to:")
+                print("1. Queen")
+                print("2. Rook")
+                print("3. Bishop")
+                print("4. Knight")
+                choice = input("Enter your choice (1-4): ")
+                promoted_piece = chess.promote_pawn(fila, columna, choice)
+                print(f"Pawn promoted to {promoted_piece}")
+            elif result == "VALID":
+                print("Move successful!")
+                return
+            else:
+                print("Unexpected result. Please try again.")
+            
+        except ValueError as e:
+            print(f"Error: {e}")
+            print("Please try again.")
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+            print("Please try again.")
+        #print("Move successful!")
 
 def handle_view_score(chess):
     captures = chess.get_captures()
