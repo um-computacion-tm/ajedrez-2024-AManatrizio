@@ -3,9 +3,11 @@ from game.chess import Chess
 class Cli:
     def __init__(self):
         self.chess = Chess()
+        self.running = False
 
     def run(self):
-        while not self.chess.is_over():
+        self.running = True
+        while self.running and not self.chess.is_over():
             self.display_game_status()
             self.display_menu()
             choice = input("Enter your choice (1-4): ")
@@ -16,10 +18,10 @@ class Cli:
                 self.handle_view_score()
             elif choice == '3':
                 if self.handle_end_game_agreement():
-                    break
+                    self.running = False
             elif choice == '4':
                 print("Quitting the game.")
-                return
+                self.running = False
             else:
                 print("Invalid choice. Please try again.")
 
