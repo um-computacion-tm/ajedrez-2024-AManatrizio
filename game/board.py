@@ -265,9 +265,3 @@ class Board:
 
         # Mostrar los números de columna en la parte inferior del tablero
         print("    0   1   2   3   4   5   6   7")
-
-
-
-if __name__ == "__main__":
-    board = Board()  # Crear una instancia de la clase Board
-    board.display_board()  # Llamar a la función display_board para imprimir el tablero
