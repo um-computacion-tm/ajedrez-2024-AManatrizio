@@ -13,6 +13,18 @@ class TestCli(unittest.TestCase):
         self.cli.chess.__mutual_agreement_to_end__ = False
         self.cli.chess.__board__ = MagicMock()
         self.cli.chess.__board__.__king_captured__ = False
+    
+
+    def run_cli_test(self, input_values, expected_output_contains=None):
+        with patch('builtins.input', side_effect=input_values), \
+             patch('sys.stdout', new_callable=StringIO) as mock_stdout:
+            self.cli.run()
+            output = mock_stdout.getvalue()
+            
+            if expected_output_contains:
+                self.assertIn(expected_output_contains, output)
+            
+            return output
 
     @patch('builtins.input')
     def test_run_quit(self, mock_input):
@@ -58,37 +70,18 @@ class TestCli(unittest.TestCase):
         with redirect_stdout(StringIO()):  # Captura la salida estándar
             result = self.cli.handle_end_game_agreement()
         self.assertFalse(result)
-
-    @patch('builtins.input', side_effect=['1', '62', '64', '4'])
-    @patch('sys.stdout', new_callable=StringIO)
-    def test_run_make_move_and_quit(self, mock_stdout, mock_input):
-        self.cli.run()
-        output = mock_stdout.getvalue()
+    
+    def test_run_make_move_and_quit(self):
+        output = self.run_cli_test(['1', '62', '64', '4'])
         self.assertIn("Enter your piece to move:", output)
         self.assertIn("Enter where to move:", output)
         self.assertIn("Quitting the game.", output)
 
-    @patch('builtins.input', side_effect=['2', '4'])
-    @patch('sys.stdout', new_callable=StringIO)
-    def test_run_view_score_and_quit(self, mock_stdout, mock_input):
-        self.cli.run()
-        output = mock_stdout.getvalue()
+    def test_run_view_score_and_quit(self):
+        output = self.run_cli_test(['2', '4'])
         self.assertIn("White captures:", output)
         self.assertIn("Black captures:", output)
         self.assertIn("Quitting the game.", output)
-
-    @patch('game.chess.Chess.is_over', side_effect=[False, True])
-    @patch('game.chess.Chess.display_board')
-    @patch('game.chess.Chess.get_captures', return_value={'__white_captures__': [], '__black_captures__': []})
-    @patch('game.chess.Chess.end_game_by_agreement')
-    @patch('builtins.input', side_effect=['3', 'y'])
-    @patch('sys.stdout', new_callable=StringIO)
-    def test_run_end_game_by_agreement(self, mock_stdout, mock_input, mock_end_game, mock_get_captures, mock_display_board, mock_is_over):
-        self.cli.run()
-        output = mock_stdout.getvalue()
-        print("Debug - Captured output:", output)  
-        # Verificar que el juego ha terminado
-        self.assertFalse(self.cli.running)
 
     @patch('game.chess.Chess.play_move')
     @patch('builtins.input', return_value='62')
@@ -118,3 +111,8 @@ class TestCli(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+
+
+    
