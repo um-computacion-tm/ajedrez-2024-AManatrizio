@@ -85,17 +85,40 @@ class TestChess(unittest.TestCase):
 
     def test_play_move_invalid(self):
         self.check_play_move_scenario(None, is_valid_move=False)
+    
+    def test_play_move_promotion(self):
+        self.setup_move_scenario("WHITE", True, ("PROMOTION_NEEDED", "info"))
+        result = self.chess.play_move("00", "01")
+        self.assertEqual(result, ("PROMOTION_NEEDED", "info"))
+        self.assertEqual(self.chess.__current_player__, "WHITE")
 
     def test_promote_pawn(self):
         self.chess.__board__.handle_pawn_promotion = MagicMock(return_value="QUEEN")
         result = self.chess.promote_pawn(0, 0, "QUEEN")
         self.assertEqual(result, "QUEEN")
         self.assertEqual(self.chess.__current_player__, "BLACK")
+    
+    def test_play_move_unexpected_result(self):
+        self.setup_move_scenario("WHITE", True, "UNEXPECTED")
+        result = self.chess.play_move("00", "01")
+        self.assertEqual(result, "UNEXPECTED")
+        # Verifica que el turno ha cambiado
+        self.assertEqual(self.chess.__current_player__, "BLACK")
 
     def test_parse_move(self):
         fila, columna = self.chess.parse_move("12")
         self.assertEqual(fila, 1)
         self.assertEqual(columna, 2)
+    
+    def test_parse_move_invalid_input(self):
+        with self.assertRaises(ValueError) as context:
+            self.chess.parse_move("123")
+        self.assertIn("Invalid input. Please enter two digits together", str(context.exception))
+
+        with self.assertRaises(ValueError) as context:
+            self.chess.parse_move("ab")
+        self.assertIn("Please enter only numbers for coordinates.", str(context.exception))
+
 
     def test_switch_turn(self):
         self.chess.switch_turn()

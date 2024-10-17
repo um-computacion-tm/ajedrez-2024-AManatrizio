@@ -1,4 +1,4 @@
-from cli.cli import Cli
+from cli import Cli
 
 if __name__ == "__main__":
     cli = Cli()
