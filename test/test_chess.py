@@ -8,6 +8,18 @@ class TestChess(unittest.TestCase):
     def setUp(self):
         self.chess = Chess()
 
+    def check_play_move(self, setup_color, setup_is_valid, setup_result, expected_result, expected_next_player=None):
+        self.setup_move_scenario(setup_color, setup_is_valid, setup_result)
+        result = self.chess.play_move("00", "01")
+        if isinstance(expected_result, tuple):
+            self.assertEqual(result, expected_result)
+        elif expected_result is None:
+            self.assertEqual(result, "INVALID")
+        else:
+            self.assertEqual(result, expected_result)
+        if expected_next_player:
+            self.assertEqual(self.chess.__current_player__, expected_next_player)
+
     def setup_move_scenario(self, color, is_valid_move, move_result):
         self.chess.__board__.get_color = MagicMock(return_value=color)
         self.chess.__board__.is_valid_move = MagicMock(return_value=is_valid_move)
@@ -61,10 +73,11 @@ class TestChess(unittest.TestCase):
         self.assertEqual(result, "INVALID_TURN")
 
     def test_play_move_valid(self):
-        self.setup_move_scenario("WHITE", True, "NORMAL")
-        result = self.chess.play_move("00", "01")
-        self.assertEqual(result, "VALID")
-        self.assertEqual(self.chess.__current_player__, "BLACK")
+        self.check_play_move("WHITE", True, "NORMAL", "VALID", "BLACK")
+
+    def test_play_move_unexpected_result(self):
+        self.check_play_move("WHITE", True, "UNEXPECTED", "UNEXPECTED", "BLACK")
+
 
     def check_play_move_scenario(self, expected_result, is_valid_move=True):
         self.setup_move_scenario("WHITE", is_valid_move, expected_result)
@@ -96,13 +109,6 @@ class TestChess(unittest.TestCase):
         self.chess.__board__.handle_pawn_promotion = MagicMock(return_value="QUEEN")
         result = self.chess.promote_pawn(0, 0, "QUEEN")
         self.assertEqual(result, "QUEEN")
-        self.assertEqual(self.chess.__current_player__, "BLACK")
-    
-    def test_play_move_unexpected_result(self):
-        self.setup_move_scenario("WHITE", True, "UNEXPECTED")
-        result = self.chess.play_move("00", "01")
-        self.assertEqual(result, "UNEXPECTED")
-        # Verifica que el turno ha cambiado
         self.assertEqual(self.chess.__current_player__, "BLACK")
 
     def test_parse_move(self):
