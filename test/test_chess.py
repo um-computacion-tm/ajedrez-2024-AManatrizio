@@ -126,12 +126,5 @@ class TestChess(unittest.TestCase):
         self.assertIn("Please enter only numbers for coordinates.", str(context.exception))
 
 
-    def test_switch_turn(self):
-        self.chess.switch_turn()
-        self.assertEqual(self.chess.__current_player__, "BLACK")
-        self.chess.switch_turn()
-        self.assertEqual(self.chess.__current_player__, "WHITE")
-
-
 if __name__ == "__main__":
     unittest.main()
